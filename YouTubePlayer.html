@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="referrer" content="strict-origin-when-cross-origin">
+ <title>__TITLE__</title>
+ <style>
+  :root{color-scheme:dark;font-family:"Malgun Gothic",sans-serif;background:#111a2b;color:#e9edf5}
+  *{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column}
+  header{padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:12px}
+  header strong{letter-spacing:1.5px;color:#a3e8d2}header span{flex:1;color:#b8c5d8}
+  a{color:#a3e8d2;text-decoration:none}main{flex:1;min-height:200px;position:relative}
+  #player{width:100%;height:100%;min-width:200px;min-height:200px}
+  #empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:12px;padding:24px}
+  #empty b{font-size:40px;color:#ed6868}#empty p{font-size:13px;color:#b8c5d8;line-height:1.8}
+  footer{padding:10px 14px;font-size:11px;color:#b8c5d8;background:#192235}
+ </style>
+</head>
+<body>
+ <header><strong>DAYLIGHT</strong><span id="caption">YouTube 재생</span><a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube · 로그인 ↗</a></header>
+ <main><div id="player"></div><div id="empty"><b>▶</b><div>나만의 작은 재생 창</div><p>Daylight 위젯에서 영상이나 재생목록 링크를 입력하세요.<br>Premium 혜택은 YouTube 로그인 상태에 따라 적용됩니다.</p></div></main>
+ <footer id="status">YouTube 공식 플레이어 · 광고와 Premium 혜택은 YouTube에서 관리합니다.</footer>
+ <script>
+  'use strict';
+  let player=null,ready=false,pending=null,error='',busy=false,lastState='',desiredVolume=70,failures=0;
+  const base=new URL('.',location.href), origin='__ORIGIN__';
+  const sendState=async()=>{
+   let data={ready,error,playing:false,title:'',url:'',volume:70};
+   if(ready){try{const v=player.getVideoData(); data.title=String(v.title||'').slice(0,300);data.playing=player.getPlayerState()===1;data.url=player.getVideoUrl();data.volume=player.getVolume()}catch{}}
+   document.querySelector('#caption').textContent=data.title||'YouTube 재생';
+   const body=JSON.stringify(data);if(body!==lastState){lastState=body;try{await fetch(new URL('state',base),{method:'POST',headers:{'Content-Type':'application/json'},body})}catch{}}
+  };
+  function execute(c){
+   if(c.action==='volume'){desiredVolume=Math.max(0,Math.min(100,Number(c.value)));if(ready)player.setVolume(desiredVolume);return}
+   if(c.action==='load'){
+    if(!ready){pending=c;return}error='';document.querySelector('#empty').style.display='none';
+    if(c.list)player.loadPlaylist({list:c.list,listType:'playlist',index:0});else player.loadVideoById(c.video);
+    document.querySelector('#status').textContent='Premium 계정 로그인과 YouTube 쿠키 허용 여부에 따라 광고 없이 재생됩니다.';
+   }else if(ready){
+    if(c.action==='toggle'){player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
+    if(c.action==='pause')player.pauseVideo();
+    if(c.action==='next')player.nextVideo();
+    if(c.action==='previous')player.previousVideo();
+    if(c.action==='volume')player.setVolume(Math.max(0,Math.min(100,Number(c.value))));
+   }
+  }
+  window.onYouTubeIframeAPIReady=()=>{
+   player=new YT.Player('player',{width:'100%',height:'100%',playerVars:{origin,playsinline:1,autoplay:0},events:{
+    onReady:()=>{ready=true;player.setVolume(desiredVolume);if(pending){execute(pending);pending=null}sendState()},
+    onStateChange:sendState,
+    onAutoplayBlocked:()=>{document.querySelector('#status').textContent='브라우저가 자동 재생을 막았습니다. 영상의 재생 버튼을 눌러주세요.'},
+    onError:e=>{const messages={2:'영상 링크를 확인하세요.',5:'이 영상은 현재 재생할 수 없습니다.',100:'삭제되었거나 비공개인 영상입니다.',101:'이 영상은 외부 플레이어 재생을 허용하지 않습니다.',150:'이 영상은 외부 플레이어 재생을 허용하지 않습니다.',153:'YouTube가 재생 창을 확인하지 못했습니다. 공식 사이트에서 재생하세요.'};error=messages[e.data]||'YouTube 재생 오류 ('+e.data+')';document.querySelector('#status').textContent=error;sendState()}
+   }});
+  };
+  const script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';
+  script.onerror=()=>{error='YouTube에 연결하지 못했습니다. 인터넷 연결을 확인하세요.';sendState()};document.head.append(script);
+  setInterval(async()=>{if(busy)return;busy=true;try{const response=await fetch(new URL('commands',base));if(response.ok){failures=0;for(const command of await response.json())execute(command)}await sendState()}catch{if(++failures===4){if(ready)player.pauseVideo();document.querySelector('#status').textContent='Daylight와의 연결이 끝났습니다. 이 재생 창을 닫아주세요.'}}finally{busy=false}},500);
+ </script>
+</body>
+</html>

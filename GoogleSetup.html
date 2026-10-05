@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Daylight · 구글 캘린더 연결</title>
+<style>body{margin:0;background:#111a2b;color:#e9edf5;font:16px/1.8 'Malgun Gothic',sans-serif}main{max-width:740px;margin:64px auto;padding:0 28px 64px}h1{font-size:32px;line-height:1.4}h2{font-size:20px;margin-top:32px}a{color:#a3e8d2}li{margin:16px 0}p{color:#b6c2d5}.tag{font-size:12px;letter-spacing:3px;color:#a3e8d2}.box{padding:18px 24px;background:#192235;border-radius:12px}code{color:#a3e8d2}</style>
+<main><div class="tag">DAYLIGHT / GOOGLE CALENDAR</div><h1>내 캘린더를 위젯에 연결하기</h1><p>첫 연결은 구글에서 이 개인 앱을 등록한 뒤, 로그인하는 순서입니다. 한 번 설정하면 다음 실행부터 자동으로 일정을 가져옵니다. 캘린더는 조회만 하며 일정을 수정하지 않습니다.</p>
+<div class="box">위젯에 표시하는 내용: 선택한 캘린더의 오늘부터 7일 일정, 시작·종료 시간, 종일 일정, 장소. 한국 시간으로 표시하며 앱이 켜져 있을 때 5분마다 갱신합니다. 일정이 100개를 넘으면 시간 순으로 앞선 100개를 표시합니다.</div>
+<h2>1. 구글에서 개인 앱 설정하기</h2><ol>
+<li><a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener">Google Cloud에서 프로젝트 만들기</a>를 열고 이름을 <b>Daylight</b>로 정합니다. 이미 프로젝트가 있으면 사용해도 됩니다.</li>
+<li>해당 프로젝트에서 <a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com" target="_blank" rel="noopener">Google Calendar API</a>를 열어 <b>사용</b>을 누릅니다.</li>
+<li><a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener">Google 인증 플랫폼</a>에서 앱 설정을 시작합니다. 앱 이름은 Daylight, 지원 이메일은 본인 이메일로 입력합니다. 개인 구글 계정은 대상 사용자를 <b>외부</b>로 설정합니다. 테스트 상태라면 <b>대상 / Audience → 테스트 사용자</b>에 본인 구글 이메일을 추가합니다.</li>
+<li><a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener">클라이언트</a>에서 <b>클라이언트 만들기 → 데스크톱 앱</b>을 선택합니다. 웹 애플리케이션이 아닌 데스크톱 앱을 선택해야 합니다.</li>
+<li>생성한 클라이언트의 <b>JSON 다운로드</b>로 설정 파일을 저장합니다. 이 파일을 채팅에 붙여 넣을 필요는 없습니다.</li></ol>
+<h2>2. 위젯에서 구글 로그인하기</h2><ol><li>Daylight의 <b>구글 연결</b>을 누릅니다.</li><li>내려받은 JSON 파일을 선택합니다.</li><li>열린 브라우저에서 본인 구글 계정으로 로그인하고, 캘린더 목록과 일정 조회 권한을 허용합니다.</li><li>위젯으로 돌아오면 일정이 표시됩니다. 목록에서 원하는 캘린더를 선택하세요.</li></ol>
+<p>개인 테스트 앱은 구글에서 검증되지 않은 앱이라는 안내가 나올 수 있습니다. 본인이 만든 프로젝트인지 확인하세요. 조직 계정에서 접근이 차단되면 관리자 설정이 필요할 수 있습니다. 앱이 테스트 상태인 경우 갱신 토큰은 일반적으로 7일 후 만료되어 다시 로그인이 필요할 수 있습니다.</p>
+<h2>문제가 생겼을 때</h2><ul><li>로그인이 차단됨: 테스트 사용자에 로그인할 계정을 추가했는지 확인합니다.</li><li>권한 오류: Calendar API를 켰는지, 로그인 시 두 조회 권한을 허용했는지 확인합니다.</li><li>설정 파일을 바꾸려면: 연결을 해제하고 <b>설정 파일 변경</b>을 눌러 새 JSON 파일을 선택한 후 다시 연결합니다.</li><li>연결 해제는 이 기기의 로그인 정보를 삭제합니다. 구글에 허용한 권한까지 해제하려면 <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">구글 계정의 연결 관리</a>에서 해당 앱의 연결을 삭제하세요.</li></ul>
+<h2>저장 방식</h2><p>로그인 정보와 앱 설정은 이 윈도우 사용자 계정에서만 해독할 수 있도록 암호화해 저장합니다. 일정은 화면에 표시하는 동안 메모리에만 두고 디스크에 저장하지 않습니다. 앱 폴더를 다른 윈도우 계정이나 다른 PC로 옮겼다면 연결을 다시 설정해야 합니다. 구글에서 내려받은 원본 JSON 파일은 이 보호 방식에 포함되지 않습니다.</p>
+<p><a href="https://developers.google.com/identity/protocols/oauth2/native-app" target="_blank" rel="noopener">구글 공식 데스크톱 앱 인증 안내</a> · <a href="https://developers.google.com/workspace/calendar/api/v3/reference/events/list" target="_blank" rel="noopener">일정 조회 API 안내</a> · <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener">구글 인증과 토큰 만료 안내</a></p></main></html>

@@ -1,0 +1,39 @@
+name: Build and publish Windows release
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag
+        required: true
+        default: v0.9.0
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - name: Verify widget behavior with isolated test data
+        shell: powershell
+        run: |
+          $testData = Join-Path $env:RUNNER_TEMP ('daylight-test-' + [guid]::NewGuid() + '.json')
+          & powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Daylight.ps1 -SelfTest -DataPath $testData
+          if ($LASTEXITCODE -ne 0) { throw 'Widget verification failed' }
+      - name: Build portable ZIP and checksums
+        shell: powershell
+        run: |
+          & .\Build-Release.ps1 -OutputDirectory .\dist
+      - name: Attach release downloads
+        shell: powershell
+        run: |
+          gh release upload $env:RELEASE_TAG .\dist\Daylight-0.9.0.zip .\dist\SHA256SUMS.txt --repo $env:GITHUB_REPOSITORY --clobber
+          if ($LASTEXITCODE -ne 0) { throw 'Release upload failed' }

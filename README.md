@@ -1,2 +1,43 @@
 # Daylight
-Windows desktop widgets with calendar, tasks, notes, focus tools, weather and YouTube playback.
+
+나의 바탕화면을 꾸미는 Windows 위젯 앱입니다. 필요한 위젯만 켜고, 위치·크기·투명도·색상·글꼴을 조절하세요.
+
+## 다운로드와 실행
+
+[최신 릴리스](https://github.com/ddangmini/Daylight/releases/latest)에서 **Daylight-0.9.0.zip**을 내려받아 별도 폴더에 압축을 풀고 `Daylight.exe` 또는 `Start.cmd`를 실행하세요. Windows 10/11과 Windows PowerShell 5.1이 필요합니다. YouTube 기능에는 Microsoft Edge가 필요합니다. 실행 파일은 코드 서명이 되어 있지 않습니다.
+
+기존 사용자는 앱을 종료하고 새 파일을 별도 폴더에 푼 다음 `Update.cmd`를 실행해 기존 앱 폴더를 선택하세요. 기존 설정·메모·할 일·연동 정보는 유지됩니다. `data.json`과 `*.dat` 파일을 삭제하거나 공개하지 마세요.
+
+## 위젯
+
+일정, 할 일, 메모, 시계, 날씨, Gemini 대화, D-day, 습관, 지금 재생 중, 빠른 실행, 공부·독서 진행률, 시스템 상태, 사진·아트, 오늘의 문장, YouTube를 지원합니다. 집중 타이머, 배치 저장·복원, 일정 브리핑·알림, 디자인 프리셋도 포함합니다.
+
+위젯과 앱 콘솔은 작업표시줄·Alt+Tab에서 숨깁니다. 알림 영역의 Daylight 아이콘으로 설정과 종료 기능을 엽니다. 설정의 **표시할 위젯**과 **창 동작·잠금**은 별도 영역입니다.
+
+## YouTube와 Premium
+
+1. 설정에서 **YouTube** 위젯을 켭니다.
+2. **추가 위젯 설정 → YouTube · 계정과 재생 → YouTube 로그인**에서 전용 Edge 브라우저를 열고 계정에 로그인합니다.
+3. 위젯에 영상·재생목록 링크를 넣고 **재생 창 열기**를 누릅니다. 브라우저가 자동 재생을 막으면 영상의 재생 버튼을 누르세요.
+
+YouTube 공식 IFrame Player API를 사용하는 독립 Edge 재생 창입니다. 전용 프로필은 `%LOCALAPPDATA%\Daylight\YouTubeProfile`에 저장되어 다음 실행에서도 로그인 상태를 유지합니다. 앱은 비밀번호·쿠키를 읽거나 기존 브라우저에서 가져오지 않습니다. 재생 창과 로그인용 브라우저는 같은 전용 프로필을 사용합니다.
+
+**Premium은 구독 중인 계정을 YouTube가 인식할 때 적용됩니다. 앱이 광고를 끄거나 구독을 제공하지 않습니다.** 내장 플레이어의 로그인 인식은 Edge 쿠키 설정 등에 따라 달라질 수 있고, 실제 Premium 계정으로 광고 없는 재생을 검증한 상태는 아닙니다. 문제가 있으면 전용 브라우저에서 계정·쿠키 상태를 확인하거나 **현재 링크를 공식 사이트에서 열기**를 이용하세요. 협찬·영상 자체에 삽입된 광고는 남습니다. 외부 재생이 금지된 영상은 공식 사이트에서 재생해야 합니다.
+
+재생·일시정지, 재생목록 이전·다음, 볼륨, 창 위치·크기 저장, 항상 위 설정을 지원합니다. 재생 창은 Daylight 카드와 별도이며 카드의 투명도·이동 잠금·바탕화면 모드는 재생 창에 적용되지 않습니다. 위젯을 숨기거나 집중모드·앱 종료를 실행하면 재생 창을 닫습니다. 로그인 브라우저는 직접 닫으세요.
+
+## 연결과 개인 데이터
+
+Google Calendar·Notion·Gemini는 사용자 본인의 연결 설정이 필요합니다. Gemini 비용·무료 한도는 사용하는 프로젝트와 모델에 따라 달라집니다. 날씨는 Open-Meteo를 사용합니다. 자세한 설정은 [사용안내](사용안내.md), [구글 연결 안내](GoogleSetup.html), [노션 연결 안내](NotionSetup.html)를 참고하세요.
+
+공개 저장소와 릴리스에는 개인 일정·메모·계정 키·브라우저 프로필이 포함되지 않습니다. 앱에서 저장한 개인 데이터와 연동 파일은 설치 폴더에 남으므로 폴더를 통째로 공유하지 마세요.
+
+## 검증
+
+별도 테스트 데이터로 UI와 저장·복원 동작을 검사할 수 있습니다.
+
+```powershell
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Daylight.ps1 -SelfTest -DataPath "$env:TEMP\daylight-test-$([guid]::NewGuid()).json"
+```
+
+[변경 내역](CHANGELOG.md)

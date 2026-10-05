@@ -1,0 +1,13 @@
+data.json*
+*.dat
+*.dat.*
+*.bak
+*.tmp
+diagnostics.log*
+updates/
+YouTubeProfile/
+work/
+*.zip
+dist/
+client_secret*.json
+credentials*.json
