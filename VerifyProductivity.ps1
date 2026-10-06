@@ -25,7 +25,19 @@ try {
  Add-TimetableClass '' '주말 수업' 6 '09:00' '10:00' '' '' '#A5C8EF' '2026-10-01' '2026-12-31'
  $days=@(Get-TimetableDays); Assert-UI ($days.Count -eq 6 -and 6 -in $days -and 0 -notin $days) 'Only scheduled weekend day appears'
  Assert-UI (-not (Get-NextClass ([DateTime]'2027-01-01'))) 'Semester boundaries respected'
- Show-TimetableEditor; Assert-UI ($script:timetableEditor.FindName('ClassDay').Items.Count -eq 7) 'Timetable editor fields'
+ Show-TimetableEditor; Assert-UI ($script:timetableEditor.FindName('ClassTimes').Children[0].Children[0].Items.Count -eq 7) 'Timetable editor fields'
+ $prior=@($state.timetable)
+ Save-TimetableGroup '' '일본어' @(@{day=1;start='13:00';end='14:30'},@{day=3;start='11:30';end='13:00'}) '357호' '' '#C8B9EC' '2026-10-01' '2026-12-31'
+ $jp=@($state.timetable|Where-Object {$_.title -eq '일본어'}); Assert-UI ($jp.Count -eq 2 -and $jp[0].groupId -eq $jp[1].groupId) 'Split class times share one course'
+ Show-TimetableEditor $jp[1].id; Assert-UI ($script:timetableEditor.FindName('ClassTimes').Children.Count -eq 2) 'Click either block loads all times'
+ $script:timetableEditor.FindName('ClassAddTime').RaiseEvent((New-Object Windows.RoutedEventArgs ([Windows.Controls.Button]::ClickEvent)))
+ Assert-UI ($script:timetableEditor.FindName('ClassTimes').Children.Count -eq 3) 'Add time creates editable row'
+ $before=ConvertTo-Json $state.timetable -Depth 8 -Compress
+ $blocked=$false; try {Save-TimetableGroup $jp[0].id '일본어' @(@{day=2;start='09:00';end='10:00'},@{day=1;start='10:00';end='11:00'}) '' '' '#C8B9EC' '2026-10-01' '2026-12-31'} catch {$blocked=$true}
+ Assert-UI ($blocked -and (ConvertTo-Json $state.timetable -Depth 8 -Compress) -eq $before) 'Invalid second time rolls back whole edit'
+ Save-TimetableGroup $jp[0].id '일본어 수정' @(@{id=$jp[0].id;day=1;start='13:00';end='14:00'}) '' '' '#C8B9EC' '2026-10-01' '2026-12-31'
+ Assert-UI (@(Get-ClassGroup $jp[0].id).Count -eq 1 -and -not @($state.timetable|Where-Object {$_.id -eq $jp[1].id}).Count) 'Removing a time preserves other courses'
+ $state.timetable=$prior; Save-State; Render-Timetable
  Show-QuickEntry; Assert-UI ($script:quickWindow.FindName('QuickText')) 'Quick dialog fields'
  Show-WeeklyReview; Assert-UI ($script:reviewWindow.FindName('ReviewRows').Children.Count -eq 7) 'Weekly review renders seven days'
  Assert-UI ((Get-StartupCommand 'C:\Apps\Daylight') -eq '"C:\Apps\Daylight\Daylight.exe"') 'Startup launches hidden GUI executable with quoted path'

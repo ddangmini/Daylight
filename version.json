@@ -1,225 +1,225 @@
 {
-    "version":  "0.10.0",
-    "files":  [
-                  {
-                      "name":  "Daylight.ps1",
-                      "sha256":  "41EE9DA9613A3F136B77FDB0FD8F0E47CB4CD3002026F63777A2F3746CC0EA57"
-                  },
-                  {
-                      "name":  "Productivity.ps1",
-                      "sha256":  "D27DD3A99C900B73554AB07E30DD9B5FE2A5B884FA49AA5026B445DC15C54BF6"
-                  },
-                  {
-                      "name":  "ProductivityUI.ps1",
-                      "sha256":  "40114ED8F47F6C2DF26C66ADC706359FADCB39D61EA43843A6F2F3BBE39B0E18"
-                  },
-                  {
-                      "name":  "Timetable.ps1",
-                      "sha256":  "146C4E925CB627B4452C632173D6B4CA70733BF7DAE6C0D9645DE5A936C783E8"
-                  },
-                  {
-                      "name":  "QuickInput.cs",
-                      "sha256":  "036EBA6BE7BB838F091D61372ECDA3354082F66AF524BCB975371FF91EACE030"
-                  },
-                  {
-                      "name":  "UpdateWorker.ps1",
-                      "sha256":  "AED7535A5D13F8FC9C41BB5E5E84AB9405AE40C0147C4F98B738D7C2DBDA1063"
-                  },
-                  {
-                      "name":  "UpdateManager.ps1",
-                      "sha256":  "941A5F71F4596BB1ED13D37ACFD596472DEB6E80070E0C34287FD3534DEF0B1C"
-                  },
-                  {
-                      "name":  "UpdateHandoff.ps1",
-                      "sha256":  "EFD6714923D0DAEB36128169A729F0096C300E44BF7F098F030ACC3DAF093754"
-                  },
-                  {
-                      "name":  "VerifyProductivity.ps1",
-                      "sha256":  "BE3E62334DC67238BADB9C0D0678D81C9BFF989EACFF7D8AEF30A914C40F77F3"
-                  },
-                  {
-                      "name":  "Alignment.ps1",
-                      "sha256":  "687EB69FBD776FB0C9B527221782A1169225AB419322C1F0CB969DECB4267717"
-                  },
-                  {
-                      "name":  "VerifyAlignment.ps1",
-                      "sha256":  "2C11A4023EA5D8D195A29E7B40315A92D01B7694F6A1EB64344C1D34D893F8BA"
-                  },
-                  {
-                      "name":  "Calendar.ps1",
-                      "sha256":  "188754119F1231C2F6B86E51FCEE21B68568DE4C923C24A361211531DFC822DA"
-                  },
-                  {
-                      "name":  "Notion.ps1",
-                      "sha256":  "532126DCBA3262406E926B3A8854DEA63F189F6CA9A121F61B86417357EA63EF"
-                  },
-                  {
-                      "name":  "NotionUI.ps1",
-                      "sha256":  "0FBAA99D1914F98B5365C7D3D5B004CC5D4DFEEF416C3FC1B28FD71C7D36A5F2"
-                  },
-                  {
-                      "name":  "Theme.xaml",
-                      "sha256":  "1E2D187590DE37F34E310BAA22512C18F518C893220D57BEC201B4A78BC1CBC7"
-                  },
-                  {
-                      "name":  "Start.cmd",
-                      "sha256":  "0BD6E12E7A1526DF5A69FF41E5DB4100418FD8E039A5D8A39422F5DBEF65A42C"
-                  },
-                  {
-                      "name":  "GoogleSetup.html",
-                      "sha256":  "275E0EA9317EF32AFAA41729E8CA5F4988ABE510EAA6859996A3FFE8C04FE9A9"
-                  },
-                  {
-                      "name":  "NotionSetup.html",
-                      "sha256":  "51EB7F187DAB3FA6E97B350D5269B4B38E6DD6DC358D4924D2B437999BAD1A00"
-                  },
-                  {
-                      "name":  "사용안내.md",
-                      "sha256":  "F48F3A8C11027DF04FAAFC317428C6ED131E6187F54EC50EEB55584739331608"
-                  },
-                  {
-                      "name":  "Shell.ps1",
-                      "sha256":  "59CEAD2FFEBD74894BBDF7560749614DCA00A98908433A80B98B581F098238A5"
-                  },
-                  {
-                      "name":  "Layout.ps1",
-                      "sha256":  "369BAD8C26857CB35D4A957187274DA2F32F0281E42318EF8FD2E06D872B12C9"
-                  },
-                  {
-                      "name":  "Weather.ps1",
-                      "sha256":  "23BAB2CBF94F7B42322068708928C0B5894A9703BC7197C92E80EEBAE9247053"
-                  },
-                  {
-                      "name":  "VerifyUI.ps1",
-                      "sha256":  "C0C1AC0A498EF304F166337DA275EEB24C1D905A04C70631ECFA30CAEE4FA1A5"
-                  },
-                  {
-                      "name":  "Memo.ps1",
-                      "sha256":  "881CF2E45E6D4229A84D60C755C6CC215141489C1B78C0654A1F37208B83899F"
-                  },
-                  {
-                      "name":  "Appearance.ps1",
-                      "sha256":  "71AAD49FFBB85C8F6F93B4EC4496B0D2D33EB010DE4FB5E551B13D1F0D6181F1"
-                  },
-                  {
-                      "name":  "GPT.ps1",
-                      "sha256":  "646891CC24396CFF94C64490FADEE1BF7DE170E7C14B0D7C4A32834C2ADFE517"
-                  },
-                  {
-                      "name":  "GPTUI.ps1",
-                      "sha256":  "88BB2E074C4E99FC63E6F2659308D2ABC5E5F16C6C9B85D978B5BA3581A40F90"
-                  },
-                  {
-                      "name":  "WeatherUI.ps1",
-                      "sha256":  "94B160FBD430664BC2AB050EF529742E6CB117F51B935253D6005029837AF527"
-                  },
-                  {
-                      "name":  "WindowHost.ps1",
-                      "sha256":  "A90853E99753B1D2F6DFAF1057A2B603325F1242BA99A9807BADA45BAEA3A6D3"
-                  },
-                  {
-                      "name":  "Diagnostics.ps1",
-                      "sha256":  "E93A573346969CCAA9AAFBE4ED33FC4F6F27237F6C90E51A66008C0846313FAC"
-                  },
-                  {
-                      "name":  "BackgroundWork.ps1",
-                      "sha256":  "A6AEE7E5B29FD84F9BA2C227DD18F10758F2E820D8114F22D6263DCAD23E4700"
-                  },
-                  {
-                      "name":  "Desktop.ps1",
-                      "sha256":  "8F797B00756F428D84DD2C39F48A18CC285C9D3E7216B2E78F4B34025C926A7C"
-                  },
-                  {
-                      "name":  "ExtraShell.ps1",
-                      "sha256":  "7F3F90D379D241C69C9957061CF60E9226444220DD2A39DD17C0916F4F9BCE43"
-                  },
-                  {
-                      "name":  "Extras.ps1",
-                      "sha256":  "470BE3889EFEDA0AA8B7C88A3EE18ED90F9CCBF70880F2A7A9BEACFDC3DA94A1"
-                  },
-                  {
-                      "name":  "ExtraBackend.ps1",
-                      "sha256":  "0E20BEDE3131BBF8B45FAF5CA9243CA9B720957CB4EAA0F020A841DE63F3E587"
-                  },
-                  {
-                      "name":  "VerifyExtras.ps1",
-                      "sha256":  "6ADB72645067946775C68D8E8BBFC5BDC1E29E5AB5DB0DDE9B518B6B8143BF12"
-                  },
-                  {
-                      "name":  "Daylight.exe",
-                      "sha256":  "49C5B1969A4A00FEA5A1DE8E8F5A25825CDADAADE57E0E25305571B933E5E9B8"
-                  },
-                  {
-                      "name":  "Features.ps1",
-                      "sha256":  "F39384FF20D4B6A92A1DFF2533312C5EA0842BAFCA7B05D8113CD4B4B9CA64B6"
-                  },
-                  {
-                      "name":  "VerifyFeatures.ps1",
-                      "sha256":  "E9C471FD6295F07406BBAF1A51BD622110E49EBFAA154D017EC6D71D1FBC879B"
-                  },
-                  {
-                      "name":  "DesignGallery.html",
-                      "sha256":  "F49D6FB15C6BCDC8952BC2F0D40324AD65A8350026D1395B899083F13A6C605E"
-                  },
-                  {
-                      "name":  "Styles.ps1",
-                      "sha256":  "2015DD250AC22E527774C501619EB25CDEB2C5DAC154BFBB1DFC301C880D15F0"
-                  },
-                  {
-                      "name":  "Icons.ps1",
-                      "sha256":  "31906E5C3944D50F6C6207E760EF5813217927FECA9226D16A0F9D42200BFF71"
-                  },
-                  {
-                      "name":  "Daylight.ico",
-                      "sha256":  "0C7B90D2F12922089AB143F36A797DCF5F61C73B47ADD3D564C0E7AD172D6277"
-                  },
-                  {
-                      "name":  "Daylight.png",
-                      "sha256":  "AE4FB9D0FC3ECDC03727D3435F892FED847D4014B80590C5ACA4728921E4B185"
-                  },
-                  {
-                      "name":  "YouTubeEmbedded.cs",
-                      "sha256":  "EBD32138C7788496F4BB84A9CA3BC3F11EFEF2CACF396983FC37EA14C1AE977F"
-                  },
-                  {
-                      "name":  "Microsoft.Web.WebView2.Core.dll",
-                      "sha256":  "2B999D1775004E98B32F281F4518F3952DF650970748527EF5B54FA9979D6C9C"
-                  },
-                  {
-                      "name":  "Microsoft.Web.WebView2.Wpf.dll",
-                      "sha256":  "6D329162B460515A849C693518FF626A1A3363E79D549CFD6822E5601F24603E"
-                  },
-                  {
-                      "name":  "WebView2Loader.dll",
-                      "sha256":  "8427B1FC58EC707813E5C0A51EB5D69397BB333250A7B891BE4D3B123F1E0F1C"
-                  },
-                  {
-                      "name":  "WebView2-LICENSE.txt",
-                      "sha256":  "0AF8F1B807512AAE39C2AC1AA4D0CAE65CABECB6FD554B8439A5162A0D6ECA55"
-                  },
-                  {
-                      "name":  "YouTube.ps1",
-                      "sha256":  "C7AFEAB65F79252ED3DCB5CCC75CA77E972F64E4B35272F408490D050B771C37"
-                  },
-                  {
-                      "name":  "YouTubeHost.cs",
-                      "sha256":  "178BB0A47433E1C61365DF3BDA8235488E1EF451D762F96A937A4AC89E472D2D"
-                  },
-                  {
-                      "name":  "YouTubePlayer.html",
-                      "sha256":  "C66C78E939916E32E40DA1D7D2ADAB1BC9488A3168E1006F0AE670AA57A2183E"
-                  },
-                  {
-                      "name":  "VerifyYouTube.ps1",
-                      "sha256":  "0D9DA0ADED7FF8B6B59D2360D9B377423306B7B0B3F48BA36FB694505D233885"
-                  },
-                  {
-                      "name":  "README.md",
-                      "sha256":  "7C8EAB636C6C4571C3525E0F8C1D9042ECC4580A4FE17BBC8295D62B8FDC56E2"
-                  },
-                  {
-                      "name":  "CHANGELOG.md",
-                      "sha256":  "A517D0D20FE84329865F2DAD11ED61CC0D465B30FDA31A50DE45B5500E2FBB77"
-                  }
-              ]
+  "version": "0.10.1",
+  "files": [
+    {
+      "name": "Daylight.ps1",
+      "sha256": "41EE9DA9613A3F136B77FDB0FD8F0E47CB4CD3002026F63777A2F3746CC0EA57"
+    },
+    {
+      "name": "Productivity.ps1",
+      "sha256": "D27DD3A99C900B73554AB07E30DD9B5FE2A5B884FA49AA5026B445DC15C54BF6"
+    },
+    {
+      "name": "ProductivityUI.ps1",
+      "sha256": "40114ED8F47F6C2DF26C66ADC706359FADCB39D61EA43843A6F2F3BBE39B0E18"
+    },
+    {
+      "name": "Timetable.ps1",
+      "sha256": "3DF3C61090613553F351DC2ABC3D3C6D0455A3CD5C1D97F5C6D79667D6DE4334"
+    },
+    {
+      "name": "QuickInput.cs",
+      "sha256": "036EBA6BE7BB838F091D61372ECDA3354082F66AF524BCB975371FF91EACE030"
+    },
+    {
+      "name": "UpdateWorker.ps1",
+      "sha256": "AED7535A5D13F8FC9C41BB5E5E84AB9405AE40C0147C4F98B738D7C2DBDA1063"
+    },
+    {
+      "name": "UpdateManager.ps1",
+      "sha256": "941A5F71F4596BB1ED13D37ACFD596472DEB6E80070E0C34287FD3534DEF0B1C"
+    },
+    {
+      "name": "UpdateHandoff.ps1",
+      "sha256": "EFD6714923D0DAEB36128169A729F0096C300E44BF7F098F030ACC3DAF093754"
+    },
+    {
+      "name": "VerifyProductivity.ps1",
+      "sha256": "9DC1F086626BD365BAD79E3C495366D8DC0A7308401827D53FB5BA9B47E6D073"
+    },
+    {
+      "name": "Alignment.ps1",
+      "sha256": "687EB69FBD776FB0C9B527221782A1169225AB419322C1F0CB969DECB4267717"
+    },
+    {
+      "name": "VerifyAlignment.ps1",
+      "sha256": "2C11A4023EA5D8D195A29E7B40315A92D01B7694F6A1EB64344C1D34D893F8BA"
+    },
+    {
+      "name": "Calendar.ps1",
+      "sha256": "188754119F1231C2F6B86E51FCEE21B68568DE4C923C24A361211531DFC822DA"
+    },
+    {
+      "name": "Notion.ps1",
+      "sha256": "532126DCBA3262406E926B3A8854DEA63F189F6CA9A121F61B86417357EA63EF"
+    },
+    {
+      "name": "NotionUI.ps1",
+      "sha256": "0FBAA99D1914F98B5365C7D3D5B004CC5D4DFEEF416C3FC1B28FD71C7D36A5F2"
+    },
+    {
+      "name": "Theme.xaml",
+      "sha256": "1E2D187590DE37F34E310BAA22512C18F518C893220D57BEC201B4A78BC1CBC7"
+    },
+    {
+      "name": "Start.cmd",
+      "sha256": "0BD6E12E7A1526DF5A69FF41E5DB4100418FD8E039A5D8A39422F5DBEF65A42C"
+    },
+    {
+      "name": "GoogleSetup.html",
+      "sha256": "275E0EA9317EF32AFAA41729E8CA5F4988ABE510EAA6859996A3FFE8C04FE9A9"
+    },
+    {
+      "name": "NotionSetup.html",
+      "sha256": "51EB7F187DAB3FA6E97B350D5269B4B38E6DD6DC358D4924D2B437999BAD1A00"
+    },
+    {
+      "name": "사용안내.md",
+      "sha256": "F48F3A8C11027DF04FAAFC317428C6ED131E6187F54EC50EEB55584739331608"
+    },
+    {
+      "name": "Shell.ps1",
+      "sha256": "59CEAD2FFEBD74894BBDF7560749614DCA00A98908433A80B98B581F098238A5"
+    },
+    {
+      "name": "Layout.ps1",
+      "sha256": "369BAD8C26857CB35D4A957187274DA2F32F0281E42318EF8FD2E06D872B12C9"
+    },
+    {
+      "name": "Weather.ps1",
+      "sha256": "23BAB2CBF94F7B42322068708928C0B5894A9703BC7197C92E80EEBAE9247053"
+    },
+    {
+      "name": "VerifyUI.ps1",
+      "sha256": "C0C1AC0A498EF304F166337DA275EEB24C1D905A04C70631ECFA30CAEE4FA1A5"
+    },
+    {
+      "name": "Memo.ps1",
+      "sha256": "881CF2E45E6D4229A84D60C755C6CC215141489C1B78C0654A1F37208B83899F"
+    },
+    {
+      "name": "Appearance.ps1",
+      "sha256": "71AAD49FFBB85C8F6F93B4EC4496B0D2D33EB010DE4FB5E551B13D1F0D6181F1"
+    },
+    {
+      "name": "GPT.ps1",
+      "sha256": "646891CC24396CFF94C64490FADEE1BF7DE170E7C14B0D7C4A32834C2ADFE517"
+    },
+    {
+      "name": "GPTUI.ps1",
+      "sha256": "88BB2E074C4E99FC63E6F2659308D2ABC5E5F16C6C9B85D978B5BA3581A40F90"
+    },
+    {
+      "name": "WeatherUI.ps1",
+      "sha256": "94B160FBD430664BC2AB050EF529742E6CB117F51B935253D6005029837AF527"
+    },
+    {
+      "name": "WindowHost.ps1",
+      "sha256": "A90853E99753B1D2F6DFAF1057A2B603325F1242BA99A9807BADA45BAEA3A6D3"
+    },
+    {
+      "name": "Diagnostics.ps1",
+      "sha256": "E93A573346969CCAA9AAFBE4ED33FC4F6F27237F6C90E51A66008C0846313FAC"
+    },
+    {
+      "name": "BackgroundWork.ps1",
+      "sha256": "A6AEE7E5B29FD84F9BA2C227DD18F10758F2E820D8114F22D6263DCAD23E4700"
+    },
+    {
+      "name": "Desktop.ps1",
+      "sha256": "8F797B00756F428D84DD2C39F48A18CC285C9D3E7216B2E78F4B34025C926A7C"
+    },
+    {
+      "name": "ExtraShell.ps1",
+      "sha256": "7F3F90D379D241C69C9957061CF60E9226444220DD2A39DD17C0916F4F9BCE43"
+    },
+    {
+      "name": "Extras.ps1",
+      "sha256": "470BE3889EFEDA0AA8B7C88A3EE18ED90F9CCBF70880F2A7A9BEACFDC3DA94A1"
+    },
+    {
+      "name": "ExtraBackend.ps1",
+      "sha256": "0E20BEDE3131BBF8B45FAF5CA9243CA9B720957CB4EAA0F020A841DE63F3E587"
+    },
+    {
+      "name": "VerifyExtras.ps1",
+      "sha256": "6ADB72645067946775C68D8E8BBFC5BDC1E29E5AB5DB0DDE9B518B6B8143BF12"
+    },
+    {
+      "name": "Daylight.exe",
+      "sha256": "49C5B1969A4A00FEA5A1DE8E8F5A25825CDADAADE57E0E25305571B933E5E9B8"
+    },
+    {
+      "name": "Features.ps1",
+      "sha256": "F39384FF20D4B6A92A1DFF2533312C5EA0842BAFCA7B05D8113CD4B4B9CA64B6"
+    },
+    {
+      "name": "VerifyFeatures.ps1",
+      "sha256": "E9C471FD6295F07406BBAF1A51BD622110E49EBFAA154D017EC6D71D1FBC879B"
+    },
+    {
+      "name": "DesignGallery.html",
+      "sha256": "F49D6FB15C6BCDC8952BC2F0D40324AD65A8350026D1395B899083F13A6C605E"
+    },
+    {
+      "name": "Styles.ps1",
+      "sha256": "2015DD250AC22E527774C501619EB25CDEB2C5DAC154BFBB1DFC301C880D15F0"
+    },
+    {
+      "name": "Icons.ps1",
+      "sha256": "31906E5C3944D50F6C6207E760EF5813217927FECA9226D16A0F9D42200BFF71"
+    },
+    {
+      "name": "Daylight.ico",
+      "sha256": "0C7B90D2F12922089AB143F36A797DCF5F61C73B47ADD3D564C0E7AD172D6277"
+    },
+    {
+      "name": "Daylight.png",
+      "sha256": "AE4FB9D0FC3ECDC03727D3435F892FED847D4014B80590C5ACA4728921E4B185"
+    },
+    {
+      "name": "YouTubeEmbedded.cs",
+      "sha256": "EBD32138C7788496F4BB84A9CA3BC3F11EFEF2CACF396983FC37EA14C1AE977F"
+    },
+    {
+      "name": "Microsoft.Web.WebView2.Core.dll",
+      "sha256": "2B999D1775004E98B32F281F4518F3952DF650970748527EF5B54FA9979D6C9C"
+    },
+    {
+      "name": "Microsoft.Web.WebView2.Wpf.dll",
+      "sha256": "6D329162B460515A849C693518FF626A1A3363E79D549CFD6822E5601F24603E"
+    },
+    {
+      "name": "WebView2Loader.dll",
+      "sha256": "8427B1FC58EC707813E5C0A51EB5D69397BB333250A7B891BE4D3B123F1E0F1C"
+    },
+    {
+      "name": "WebView2-LICENSE.txt",
+      "sha256": "0AF8F1B807512AAE39C2AC1AA4D0CAE65CABECB6FD554B8439A5162A0D6ECA55"
+    },
+    {
+      "name": "YouTube.ps1",
+      "sha256": "C7AFEAB65F79252ED3DCB5CCC75CA77E972F64E4B35272F408490D050B771C37"
+    },
+    {
+      "name": "YouTubeHost.cs",
+      "sha256": "178BB0A47433E1C61365DF3BDA8235488E1EF451D762F96A937A4AC89E472D2D"
+    },
+    {
+      "name": "YouTubePlayer.html",
+      "sha256": "C66C78E939916E32E40DA1D7D2ADAB1BC9488A3168E1006F0AE670AA57A2183E"
+    },
+    {
+      "name": "VerifyYouTube.ps1",
+      "sha256": "0D9DA0ADED7FF8B6B59D2360D9B377423306B7B0B3F48BA36FB694505D233885"
+    },
+    {
+      "name": "README.md",
+      "sha256": "231EEEC63CAEB8ED57CAF61B930DAD3D43700C71477D0E66F48903FFCEC95D55"
+    },
+    {
+      "name": "CHANGELOG.md",
+      "sha256": "AD528A876E49FBE0E79EB3101EF47883F177B14398D324C62C6DA4FD89F2BFE2"
+    }
+  ]
 }

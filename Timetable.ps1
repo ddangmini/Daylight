@@ -18,7 +18,38 @@ function Add-TimetableClass([string]$Id,[string]$Title,[int]$Day,[string]$Start,
  }
  if(-not $Id) {$Id=[guid]::NewGuid().ToString('N')}
  $state.timetable=@($state.timetable|Where-Object {$_.id -ne $Id})+@(@{id=$Id;title=$Title.Trim();day=$Day;start=$startMinute;end=$endMinute;room=$Room.Trim();link=$Link;color=$Color;from=$From;until=$Until})
- Save-State; Render-Timetable
+ if(-not $script:validatingClassGroup) {Save-State; Render-Timetable}
+}
+function Get-ClassGroup([string]$Id) {
+ $class=$state.timetable|Where-Object {$_.id -eq $Id}|Select-Object -First 1
+ if(-not $class) {return @()}
+ if($class.groupId) {return @($state.timetable|Where-Object {$_.groupId -eq $class.groupId})}
+ return @($class)
+}
+function Save-TimetableGroup([string]$Id,[string]$Title,$Slots,[string]$Room,[string]$Link,[string]$Color,[string]$From,[string]$Until) {
+ if(-not @($Slots).Count) {throw '수업 시간을 하나 이상 추가하세요.'}
+ $original=@($state.timetable); $members=@(Get-ClassGroup $Id); $ids=@($members|ForEach-Object {$_.id})
+ $groupId=[guid]::NewGuid().ToString('N'); if($members.Count -and $members[0].groupId) {$groupId=$members[0].groupId}
+ # Validate all rows against a temporary table before a single durable save.
+ $script:validatingClassGroup=$true
+ try {
+  $state.timetable=@($original|Where-Object {$_.id -notin $ids})
+  foreach($slot in @($Slots)) {
+   $slotId=[guid]::NewGuid().ToString('N'); if($slot.id -and $slot.id -in $ids) {$slotId=$slot.id}
+   Add-TimetableClass $slotId $Title ([int]$slot.day) $slot.start $slot.end $Room $Link $Color $From $Until
+   Set-DaylightProperty $state.timetable[-1] 'groupId' $groupId
+  }
+ } catch {$state.timetable=$original; throw} finally {$script:validatingClassGroup=$false}
+ if(-not $script:validatingClassGroup) {Save-State; Render-Timetable}
+}
+function Add-ClassTimeRow([int]$Day=1,[string]$Start='09:00',[string]$End='10:30',[string]$Id='') {
+ $e=$script:timetableEditor; $row=New-Object Windows.Controls.StackPanel; $row.Orientation='Horizontal'; $row.Margin='0,0,0,8'; $row.Tag=$Id
+ $dayBox=New-Object Windows.Controls.ComboBox; $dayBox.Width=65
+ foreach($name in @('일','월','화','수','목','금','토')) {[void]$dayBox.Items.Add($name)}
+ $dayBox.SelectedIndex=$Day; [void]$row.Children.Add($dayBox)
+ foreach($value in @($Start,$End)) {$box=New-Object Windows.Controls.TextBox; $box.Text=$value; $box.Width=90; $box.Margin='6,0,0,0'; [void]$row.Children.Add($box)}
+ $remove=New-Object Windows.Controls.Button; $remove.Content='−'; $remove.ToolTip='이 시간 삭제'; $remove.Padding='8,4'; $remove.Add_Click({$panel=$this.Parent.Parent; if($panel.Children.Count -gt 1) {$panel.Children.Remove($this.Parent)} else {$script:timetableEditor.FindName('ClassStatus').Text='수업 시간은 하나 이상 필요합니다.'}}); [void]$row.Children.Add($remove)
+ [void]$e.FindName('ClassTimes').Children.Add($row)
 }
 function Get-TimetableDays($Classes=@($state.timetable)) {
  $days=@(1,2,3,4,5); if(@($Classes|Where-Object {$_.day -eq 6}).Count) {$days+=6}; if(@($Classes|Where-Object {$_.day -eq 0}).Count) {$days+=0}; return $days
@@ -82,24 +113,29 @@ public class DaylightClassWidth : IValueConverter {
 '@
 $script:classWidthConverter=New-Object DaylightClassWidth
 function Show-TimetableEditor([string]$Id='') {
+ $members=@(Get-ClassGroup $Id); if($members.Count) {$Id=$members[0].id}
  if($script:timetableEditor) {$script:timetableEditor.Close()}
  $script:timetableEditor=New-DaylightWindow @'
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="나의 시간표" Width="460" Height="730" MinWidth="400" MinHeight="400" Background="#192235" Foreground="#E9EDF5" FontFamily="Malgun Gothic" ShowInTaskbar="False"><Window.Resources>__THEME__</Window.Resources><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24"><TextBlock Text="나의 시간표" FontSize="24" Margin="0,0,0,18"/><ComboBox x:Name="ClassChoice" ToolTip="새 수업 또는 수정할 수업"/><TextBlock Text="수업 이름" Margin="0,14,0,6"/><TextBox x:Name="ClassTitle"/><TextBlock Text="요일" Margin="0,12,0,6"/><ComboBox x:Name="ClassDay"/><TextBlock Text="시작 · 종료 (24시간)" Margin="0,12,0,6"/><StackPanel Orientation="Horizontal"><TextBox x:Name="ClassStart" Text="09:00" Width="120"/><TextBox x:Name="ClassEnd" Text="10:30" Width="120" Margin="10,0"/></StackPanel><TextBlock Text="강의실 · 장소" Margin="0,12,0,6"/><TextBox x:Name="ClassRoom"/><TextBlock Text="수업 링크 (선택)" Margin="0,12,0,6"/><TextBox x:Name="ClassLink"/><TextBlock Text="학기 시작 · 종료 (YYYY-MM-DD)" Margin="0,12,0,6"/><StackPanel Orientation="Horizontal"><TextBox x:Name="ClassFrom" Width="150"/><TextBox x:Name="ClassUntil" Width="150" Margin="10,0"/></StackPanel><TextBlock Text="수업 색" Margin="0,12,0,6"/><ComboBox x:Name="ClassColor"/><WrapPanel Margin="0,18,0,0"><Button x:Name="ClassSave" Content="저장"/><Button x:Name="ClassDelete" Content="삭제"/><Button x:Name="ClassNew" Content="새 수업"/></WrapPanel><TextBlock x:Name="ClassStatus" Text="매주 반복 · 시간표의 수업을 누르면 수정합니다." TextWrapping="Wrap" FontSize="11" Margin="0,12,0,0"/></StackPanel></ScrollViewer></Window>
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="나의 시간표" Width="460" Height="730" MinWidth="400" MinHeight="400" Background="#192235" Foreground="#E9EDF5" FontFamily="Malgun Gothic" ShowInTaskbar="False"><Window.Resources>__THEME__</Window.Resources><ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24"><TextBlock Text="나의 시간표" FontSize="24" Margin="0,0,0,18"/><ComboBox x:Name="ClassChoice" ToolTip="새 수업 또는 수정할 수업"/><TextBlock Text="수업 이름" Margin="0,14,0,6"/><TextBox x:Name="ClassTitle"/><TextBlock Text="수업 시간 · 요일 / 시작 / 종료" Margin="0,12,0,6"/><StackPanel x:Name="ClassTimes"/><Button x:Name="ClassAddTime" Content="＋ 시간 추가" HorizontalAlignment="Left"/><TextBlock Text="강의실 · 장소" Margin="0,12,0,6"/><TextBox x:Name="ClassRoom"/><TextBlock Text="수업 링크 (선택)" Margin="0,12,0,6"/><TextBox x:Name="ClassLink"/><TextBlock Text="학기 시작 · 종료 (YYYY-MM-DD)" Margin="0,12,0,6"/><StackPanel Orientation="Horizontal"><TextBox x:Name="ClassFrom" Width="150"/><TextBox x:Name="ClassUntil" Width="150" Margin="10,0"/></StackPanel><TextBlock Text="수업 색" Margin="0,12,0,6"/><ComboBox x:Name="ClassColor"/><WrapPanel Margin="0,18,0,0"><Button x:Name="ClassSave" Content="저장"/><Button x:Name="ClassDelete" Content="수업 삭제"/><Button x:Name="ClassNew" Content="새 수업"/></WrapPanel><TextBlock x:Name="ClassStatus" Text="매주 반복 · 시간 추가로 다른 요일도 등록하세요. −는 해당 시간만, 수업 삭제는 전체 시간을 지웁니다." TextWrapping="Wrap" FontSize="11" Margin="0,12,0,0"/></StackPanel></ScrollViewer></Window>
 '@
  $editor=$script:timetableEditor; $editor.Resources.MergedDictionaries.Add($settingsWindow.Resources)
  $choice=$editor.FindName('ClassChoice'); $item=New-Object Windows.Controls.ComboBoxItem; $item.Content='새 수업'; $item.Tag=''; [void]$choice.Items.Add($item)
- foreach($class in @($state.timetable)) {$item=New-Object Windows.Controls.ComboBoxItem; $item.Content=$class.title; $item.Tag=$class.id; [void]$choice.Items.Add($item)}
- $names=@('일','월','화','수','목','금','토'); for($i=0;$i -lt 7;$i++) {$item=New-Object Windows.Controls.ComboBoxItem; $item.Content=$names[$i]; $item.Tag=$i; [void]$editor.FindName('ClassDay').Items.Add($item)}
+ foreach($class in @($state.timetable|Group-Object {if($_.groupId) {$_.groupId} else {$_.id}}|ForEach-Object {$_.Group[0]})) {$item=New-Object Windows.Controls.ComboBoxItem; $item.Content=$class.title; $item.Tag=$class.id; [void]$choice.Items.Add($item)}
  foreach($color in @('#A3E8D2','#A5C8EF','#C8B9EC','#F3BA9C','#E8CF8E')) {$item=New-Object Windows.Controls.ComboBoxItem; $item.Content=$color; $item.Tag=$color; $item.Foreground=$color; [void]$editor.FindName('ClassColor').Items.Add($item)}
  $choice.Add_SelectionChanged({
   $e=$script:timetableEditor; $id=$e.FindName('ClassChoice').SelectedItem.Tag; $class=$state.timetable|Where-Object {$_.id -eq $id}|Select-Object -First 1
   foreach($pair in @(@('ClassTitle','title'),@('ClassRoom','room'),@('ClassLink','link'))) {$e.FindName($pair[0]).Text=[string]$class.($pair[1])}
-  $e.FindName('ClassDay').SelectedIndex=1; $e.FindName('ClassColor').SelectedIndex=0; $e.FindName('ClassFrom').Text=(Get-FeatureNow).ToString('yyyy-MM-dd'); $e.FindName('ClassUntil').Text=(Get-FeatureNow).AddMonths(4).ToString('yyyy-MM-dd')
-  if($class) {$e.FindName('ClassDay').SelectedIndex=$class.day; $e.FindName('ClassStart').Text=[TimeSpan]::FromMinutes($class.start).ToString('hh\:mm'); $e.FindName('ClassEnd').Text=[TimeSpan]::FromMinutes($class.end).ToString('hh\:mm'); $e.FindName('ClassFrom').Text=$class.from; $e.FindName('ClassUntil').Text=$class.until; foreach($item in $e.FindName('ClassColor').Items) {if($item.Tag -eq $class.color) {$e.FindName('ClassColor').SelectedItem=$item}}}
+  $e.FindName('ClassTimes').Children.Clear(); $e.FindName('ClassColor').SelectedIndex=0; $e.FindName('ClassFrom').Text=(Get-FeatureNow).ToString('yyyy-MM-dd'); $e.FindName('ClassUntil').Text=(Get-FeatureNow).AddMonths(4).ToString('yyyy-MM-dd')
+  if($class) {
+   foreach($slot in @(Get-ClassGroup $id)) {Add-ClassTimeRow ([int]$slot.day) ([TimeSpan]::FromMinutes($slot.start).ToString('hh\:mm')) ([TimeSpan]::FromMinutes($slot.end).ToString('hh\:mm')) $slot.id}
+   $e.FindName('ClassFrom').Text=$class.from; $e.FindName('ClassUntil').Text=$class.until
+   foreach($item in $e.FindName('ClassColor').Items) {if($item.Tag -eq $class.color) {$e.FindName('ClassColor').SelectedItem=$item}}
+  } else {Add-ClassTimeRow}
  })
  $choice.SelectedIndex=0; foreach($item in $choice.Items) {if($item.Tag -eq $Id) {$choice.SelectedItem=$item}}
- $editor.FindName('ClassSave').Add_Click({try {$e=$script:timetableEditor; Add-TimetableClass $e.FindName('ClassChoice').SelectedItem.Tag $e.FindName('ClassTitle').Text $e.FindName('ClassDay').SelectedItem.Tag $e.FindName('ClassStart').Text $e.FindName('ClassEnd').Text $e.FindName('ClassRoom').Text $e.FindName('ClassLink').Text $e.FindName('ClassColor').SelectedItem.Tag $e.FindName('ClassFrom').Text $e.FindName('ClassUntil').Text; $e.Close(); $script:timetableEditor=$null; Set-WidgetVisible 'timetable' $true} catch {$script:timetableEditor.FindName('ClassStatus').Text=$_.Exception.Message}})
- $editor.FindName('ClassDelete').Add_Click({$id=$script:timetableEditor.FindName('ClassChoice').SelectedItem.Tag; $state.timetable=@($state.timetable|Where-Object {$_.id -ne $id}); Save-State; Render-Timetable; $script:timetableEditor.Close(); $script:timetableEditor=$null})
+ $editor.FindName('ClassSave').Add_Click({try {$e=$script:timetableEditor; $slots=@($e.FindName('ClassTimes').Children|ForEach-Object {@{id=$_.Tag;day=$_.Children[0].SelectedIndex;start=$_.Children[1].Text;end=$_.Children[2].Text}}); Save-TimetableGroup $e.FindName('ClassChoice').SelectedItem.Tag $e.FindName('ClassTitle').Text $slots $e.FindName('ClassRoom').Text $e.FindName('ClassLink').Text $e.FindName('ClassColor').SelectedItem.Tag $e.FindName('ClassFrom').Text $e.FindName('ClassUntil').Text; $e.Close(); $script:timetableEditor=$null; Set-WidgetVisible 'timetable' $true} catch {$script:timetableEditor.FindName('ClassStatus').Text=$_.Exception.Message}})
+ $editor.FindName('ClassDelete').Add_Click({$id=$script:timetableEditor.FindName('ClassChoice').SelectedItem.Tag; $ids=@(Get-ClassGroup $id|ForEach-Object {$_.id}); $state.timetable=@($state.timetable|Where-Object {$_.id -notin $ids}); Save-State; Render-Timetable; $script:timetableEditor.Close(); $script:timetableEditor=$null})
+ $editor.FindName('ClassAddTime').Add_Click({Add-ClassTimeRow})
  $editor.FindName('ClassNew').Add_Click({$script:timetableEditor.FindName('ClassChoice').SelectedIndex=0})
  if(-not $SelfTest) {$editor.Show(); [void]$editor.Activate()}
 }
