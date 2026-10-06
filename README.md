@@ -4,7 +4,7 @@
 
 ## 다운로드와 실행
 
-제공된 **Daylight-0.10.1.zip**을 별도 폴더에 압축을 풀고 `Daylight.exe` 또는 `Start.cmd`를 실행하세요. Windows 10/11과 Windows PowerShell 5.1이 필요합니다. YouTube 기능에는 Microsoft Edge WebView2 Runtime이 필요합니다. 실행 파일은 코드 서명이 되어 있지 않습니다.
+제공된 **Daylight-0.10.2.zip**을 별도 폴더에 압축을 풀고 `Daylight.exe` 또는 `Start.cmd`를 실행하세요. Windows 10/11과 Windows PowerShell 5.1이 필요합니다. YouTube 기능에는 Microsoft Edge WebView2 Runtime이 필요합니다. 실행 파일은 코드 서명이 되어 있지 않습니다.
 
 기존 사용자는 앱을 종료하고 새 파일을 별도 폴더에 푼 다음 `Update.cmd`를 실행해 기존 앱 폴더를 선택하세요. 기존 설정·메모·할 일·연동 정보는 유지됩니다. `data.json`과 `*.dat` 파일을 삭제하거나 공개하지 마세요.
 

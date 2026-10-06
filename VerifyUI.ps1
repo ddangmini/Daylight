@@ -1,5 +1,22 @@
 ﻿function Assert-UI($Value,[string]$Message) {if(-not $Value) {throw $Message}}
 function Click-UI($Button) {$Button.RaiseEvent((New-Object Windows.RoutedEventArgs ([Windows.Controls.Primitives.ButtonBase]::ClickEvent)))}
+$savedAppearance=$state.appearance
+try {
+ $state.appearance=@{}; $values=@(0,0.07,0.22,0.37,0.5,0.58,0.74,0.86,1); $expectedOpacity=@{}; $index=0
+ foreach($key in $widgets.Keys) {$expectedOpacity[$key]=[double]$values[$index%$values.Count]; $index++; $state.appearance[$key]=$savedAppearance[$key].Clone(); $state.appearance[$key].opacity=$expectedOpacity[$key]}
+ Save-State
+ $state.appearance=(Get-Content -LiteralPath $DataPath -Raw -Encoding UTF8|ConvertFrom-Json).appearance
+ Initialize-WidgetAppearance; Set-DaylightTextTone
+ foreach($key in $widgets.Keys) {
+  Assert-UI ([Math]::Abs($state.appearance[$key].opacity-$expectedOpacity[$key]) -lt 0.000001) 'Restart preserves each fractional opacity'
+  $brush=$widgets[$key].FindName('Surface').Background; $alphas=@()
+  if($brush -is [Windows.Media.SolidColorBrush]) {$alphas=@($brush.Color.A)} else {$alphas=@($brush.GradientStops|ForEach-Object {$_.Color.A})}
+  foreach($alpha in $alphas) {Assert-UI ($alpha -eq [Math]::Max(1,[Math]::Round($expectedOpacity[$key]*255))) 'Restored opacity reaches solid and gradient backgrounds'}
+ }
+ Initialize-WidgetAppearance
+ foreach($key in $widgets.Keys) {Assert-UI ($state.appearance[$key].opacity -eq $expectedOpacity[$key]) 'Hashtable reinitialization preserves opacity'}
+ 'PASS: fractional opacity survives saved JSON reload and background rendering for all widgets'
+} finally {$state.appearance=$savedAppearance; Set-DaylightTextTone; Save-State}
 if($state.note -eq '기존 버전의 메모') {Assert-UI ($state.notes[0].body -eq $state.note) 'Legacy note migration'}
 Assert-UI ([Windows.Window]::GetWindow($ui.CalendarConnect) -eq $settingsWindow) 'Calendar settings separation'
 Assert-UI ([Windows.Window]::GetWindow($ui.Tasks) -eq $tasksWindow -and [Windows.Window]::GetWindow($ui.Note) -eq $memoWindow) 'Task memo independence'

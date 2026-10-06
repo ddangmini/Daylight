@@ -5,13 +5,14 @@ $script:wallpaperStyle='10'
 $script:lastWallpaperCheck=[DateTime]::MinValue
 $script:appearanceWindow=$null
 $script:appearanceChanging=$false
+function Initialize-WidgetAppearance {
 $appearance=@{}
 foreach($key in $widgets.Keys) {
     $opacity=0.74; if($key -eq 'clock') {$opacity=0.22}; if($key -eq 'weather') {$opacity=0.58}
     $entry=$null
     if($state.appearance) {if($state.appearance -is [hashtable]) {$entry=$state.appearance[$key]} else {$entry=$state.appearance.$key}}
     $tone='auto'; $accent='#A3E8D2'
-    if($entry) {if($null -ne $entry.opacity) {$opacity=[Math]::Max(0,[Math]::Min(1,[double]$entry.opacity))}; if($entry.tone -in @('auto','light','dark')) {$tone=$entry.tone}; if($entry.accent -in @('#A3E8D2','#F3BA9C','#C8B9EC','#A5C8EF')) {$accent=$entry.accent}}
+    if($entry) {if($null -ne $entry.opacity) {$opacity=[Math]::Max([double]0,[Math]::Min([double]1,[double]$entry.opacity))}; if($entry.tone -in @('auto','light','dark')) {$tone=$entry.tone}; if($entry.accent -in @('#A3E8D2','#F3BA9C','#C8B9EC','#A5C8EF')) {$accent=$entry.accent}}
         $theme='adaptive'; $radius=20; $textScale=1.0; $font='Malgun Gothic'
     if($entry) {
         if($entry.theme -and $script:stylePresets.Contains([string]$entry.theme)) {$theme=[string]$entry.theme}
@@ -22,6 +23,8 @@ foreach($key in $widgets.Keys) {
     $appearance[$key]=@{opacity=$opacity;tone=$tone;accent=$accent;theme=$theme;radius=$radius;textScale=$textScale;font=$font}
 }
 $state.appearance=$appearance
+}
+Initialize-WidgetAppearance
 function Clear-WallpaperCache {if($script:wallpaperBitmap) {$script:wallpaperBitmap.Dispose(); $script:wallpaperBitmap=$null}; $script:wallpaperStamp=''}
 function Update-WallpaperCache {
     if(([DateTime]::UtcNow-$script:lastWallpaperCheck).TotalSeconds -lt 10) {return}
