@@ -85,7 +85,7 @@ $settingsMarkup = @'
   <ComboBox x:Name="WeatherChoice" Margin="0,10,0,0" ToolTip="검색 결과에서 지역을 선택하세요"/>
   <TextBlock x:Name="WeatherStatus" Text="서울 · 15분마다 갱신" Foreground="#99A7BE" FontSize="11" TextWrapping="Wrap" Margin="0,10,0,8"/><Button x:Name="WeatherRefresh" Content="날씨 새로고침" HorizontalAlignment="Left"/>
   <TextBlock Text="서비스 열기" FontSize="16" FontWeight="SemiBold" Margin="0,28,0,12"/><WrapPanel><Button x:Name="GPT" Content="Gemini 대화 열기"/><Button x:Name="Calendar" Content="캘린더 ↗"/><Button x:Name="Notion" Content="Notion ↗"/></WrapPanel>
-  <TextBlock Text="Daylight 0.9.2 · 바탕화면 위젯" Foreground="#8593AA" FontSize="10" Margin="0,28,0,0"/>
+  <TextBlock Text="Daylight 0.10.0 · 바탕화면 위젯" Foreground="#8593AA" FontSize="10" Margin="0,28,0,0"/>
  <Button x:Name="Quit" Content="Daylight 종료" HorizontalAlignment="Left" Margin="0,16,0,0"/></StackPanel></ScrollViewer>
 </Window>
 '@

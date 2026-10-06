@@ -6,6 +6,13 @@ if (-not $DataPath) { $DataPath = Join-Path $PSScriptRoot 'data.json' }
 trap {Write-DaylightDiagnostic 'fatal' $_; break}
 Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
 . (Join-Path $PSScriptRoot 'WindowHost.ps1')
+$script:instanceMutex=$null
+if(-not $SelfTest) {
+ $hash=[Security.Cryptography.SHA256]::Create(); try {$key=[BitConverter]::ToString($hash.ComputeHash([Text.Encoding]::UTF8.GetBytes($PSScriptRoot.ToLowerInvariant()))).Replace('-','')} finally {$hash.Dispose()}
+ $script:instanceMutex=New-Object Threading.Mutex $false,('Local\Daylight-'+$key)
+ $owned=$false; try {$owned=$instanceMutex.WaitOne(0)} catch [Threading.AbandonedMutexException] {$owned=$true}
+ if(-not $owned) {$instanceMutex.Dispose(); exit 0}
+}
 . (Join-Path $PSScriptRoot 'Calendar.ps1')
 . (Join-Path $PSScriptRoot 'Notion.ps1')
 if (-not $DataPath) { $DataPath = Join-Path $PSScriptRoot 'data.json' }
@@ -19,7 +26,7 @@ if (Test-Path -LiteralPath $DataPath) {
         $script:state.compact = [bool]$saved.compact
         $script:state.pinned = [bool]$saved.pinned
         if ($saved.calendarId) { $script:state.calendarId = [string]$saved.calendarId }
-        foreach ($key in @('hideWidgetTitles','hideWidgetBorders','snapWidgets','youtube','youtubeVisible','extras','ddayVisible','habitsVisible','mediaVisible','launcherVisible','progressVisible','systemVisible','photoVisible','quoteVisible','widgetDesktop','widgetLocks','autoLayout','lockRatio','clockVisible','weatherVisible','darkText','geometry','weatherCity','weatherLatitude','weatherLongitude','mainVisible','tasksVisible','memoVisible','chatVisible','appearance','widgetPins','layoutProfiles','alertSettings','notifications','notes','selectedNote')) {
+        foreach ($key in @('taskRules','activityHistory','timetable','timetableVisible','hotkeyEnabled','hotkeyChoice','activeSituation','situationRestore','hideWidgetTitles','hideWidgetBorders','snapWidgets','youtube','youtubeVisible','extras','ddayVisible','habitsVisible','mediaVisible','launcherVisible','progressVisible','systemVisible','photoVisible','quoteVisible','widgetDesktop','widgetLocks','autoLayout','lockRatio','clockVisible','weatherVisible','darkText','geometry','weatherCity','weatherLatitude','weatherLongitude','mainVisible','tasksVisible','memoVisible','chatVisible','appearance','widgetPins','layoutProfiles','alertSettings','notifications','notes','selectedNote')) {
             if ($null -ne $saved.PSObject.Properties[$key]) { $script:state[$key] = $saved.$key }
         }
     } catch { $script:loadWarning = '저장 파일을 읽지 못했습니다. 기존 파일을 보존합니다.' }
@@ -57,7 +64,7 @@ function Render-Tasks {
         $label = New-Object Windows.Controls.TextBlock; $label.Text = [string]$task.text; $label.TextWrapping = 'Wrap'; $label.MaxWidth = [Math]::Max(120,$tasksWindow.Width-115); $label.MaxHeight = 42; $label.TextTrimming = 'CharacterEllipsis'; $label.ToolTip=$task.text
         if ($task.done) { $label.Opacity = 0.5; $label.TextDecorations = [Windows.TextDecorations]::Strikethrough }
         $check.Content = $label
-        $check.Add_Click({ foreach ($item in $script:state.tasks) { if ($item.id -eq $this.Tag) { $item.done = [bool]$this.IsChecked } }; Save-State; Render-Tasks })
+        ${check}.Add_Click({Set-LocalTaskDone $this.Tag ([bool]$this.IsChecked)})
         [void]$row.Children.Add($check); [void]$ui.Tasks.Children.Add($row)
     }
 }
@@ -231,6 +238,10 @@ $ui.Notion.Add_Click({ Start-Process 'https://www.notion.so/' })
 . (Join-Path $PSScriptRoot 'Extras.ps1')
 . (Join-Path $PSScriptRoot 'YouTube.ps1')
 . (Join-Path $PSScriptRoot 'Alignment.ps1')
+. (Join-Path $PSScriptRoot 'Productivity.ps1')
+. (Join-Path $PSScriptRoot 'Timetable.ps1')
+. (Join-Path $PSScriptRoot 'ProductivityUI.ps1')
+. (Join-Path $PSScriptRoot 'UpdateManager.ps1')
 $script:timer = New-Object Windows.Threading.DispatcherTimer
 $timer.Interval = [TimeSpan]::FromSeconds(1); $timer.Add_Tick({
     Invoke-DaylightSafe 'clock' {Update-Clock}
@@ -243,13 +254,14 @@ $timer.Interval = [TimeSpan]::FromSeconds(1); $timer.Add_Tick({
     Invoke-DaylightSafe 'desktop' {Update-DesktopWidgets}
     Invoke-DaylightSafe 'extras' {Update-ExtraWidgets}
     Invoke-DaylightSafe 'youtube' {Update-YouTubePlayer}
+    Invoke-DaylightSafe 'productivity' {Update-Productivity}
     if (-not $SelfTest -and -not $script:calendarJob -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'calendar-token.dat')) -and ([DateTime]::UtcNow - $script:lastCalendarAttempt).TotalMinutes -ge 5) { Start-CalendarWork }
     if (-not $SelfTest -and -not $script:notionJob -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot 'notion-settings.dat')) -and ([DateTime]::UtcNow - $script:lastNotionAttempt).TotalMinutes -ge 5) { Start-NotionWork }
     if (-not $SelfTest -and $script:state.weatherVisible -and -not $script:weatherJob -and ([DateTime]::UtcNow - $script:lastWeatherAttempt).TotalMinutes -ge 15) { Start-WeatherWork }
 })
 $window.Add_Closing({
  if(-not $script:quitRequested) { $_.Cancel=$true; Set-WidgetVisible 'main' $false; return }
- $script:closingAll=$true; Stop-YouTubeWork; Stop-ExtraWork; Stop-Focus; if($script:briefingWindow) {$briefingWindow.Close()}; $timer.Stop(); $noteTimer.Stop(); Stop-CalendarWork; Stop-NotionWork; Stop-WeatherWork; Stop-GPTWork; Sync-CurrentNote; Save-State
+ $script:closingAll=$true; Stop-Productivity; Stop-YouTubeWork; Stop-ExtraWork; Stop-Focus; if($script:briefingWindow) {$briefingWindow.Close()}; $timer.Stop(); $noteTimer.Stop(); Stop-CalendarWork; Stop-NotionWork; Stop-WeatherWork; Stop-GPTWork; Sync-CurrentNote; Save-State
  $settingsWindow.Close(); foreach($key in $widgets.Keys) { if($key -ne 'main') {$widgets[$key].Close()} }
  Close-Appearance; Clear-WallpaperCache
  if($script:tray) { $script:tray.Visible=$false; $script:tray.Dispose() }

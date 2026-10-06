@@ -98,7 +98,7 @@ function Set-WidgetAppearance([string]$Key,[double]$Brightness=-1) {
             if($base -eq 0) {$base=$element.FontSize; $element.SetValue($script:baseFontProperty,[double]$base)}
             $element.FontSize=$base*$style.textScale
         }
-        if($element -is [Windows.Controls.TextBlock] -and $element.Name -ne 'WeatherIcon') {$element.Foreground=$foreground}
+        if($element -is [Windows.Controls.TextBlock] -and $element.Name -notin @('WeatherIcon','TimetableClassText')) {$element.Foreground=$foreground}
         if($element -is [Windows.Controls.TextBox] -and $element.Name -in @('Note','NoteTitle','ChatHistory','TaskInput','ChatInput')) {
             $element.Foreground=$foreground; $element.CaretBrush=$foreground
             if($element.Name -in @('TaskInput','ChatInput')) { $element.Background='#18172231'; if($dark) {$element.Background='#18192231'}; $element.BorderBrush='#305C6D7D' }
@@ -107,7 +107,7 @@ function Set-WidgetAppearance([string]$Key,[double]$Brightness=-1) {
             $element.Foreground=$foreground; $element.Background='Transparent'
             if($element.Name -eq 'ChatSend') {$element.Background=$style.accent; $element.Foreground='#172131'}
         }
-        if($extraCatalog.Contains($Key) -and ($element -is [Windows.Controls.Button] -or $element -is [Windows.Controls.CheckBox])) {$element.Foreground=$foreground; if($element -is [Windows.Controls.Button]) {$element.Background='Transparent'}}
+        if($extraCatalog.Contains($Key) -and $element.Name -ne 'TimetableClassCard' -and ($element -is [Windows.Controls.Button] -or $element -is [Windows.Controls.CheckBox])) {$element.Foreground=$foreground; if($element -is [Windows.Controls.Button]) {$element.Background='Transparent'}}
         foreach($child in [Windows.LogicalTreeHelper]::GetChildren($element)) {if($child -is [Windows.DependencyObject]) {$queue.Enqueue($child)}}
     }
     if(Get-Command Set-WidgetChrome -ErrorAction SilentlyContinue) {Set-WidgetChrome $Key}

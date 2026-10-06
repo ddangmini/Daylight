@@ -1,7 +1,7 @@
 ﻿$extrasBackup=$state.extras|ConvertTo-Json -Depth 12
 $agendaBackup=$script:lastAgenda; $notionBackup=$script:lastNotionAgenda
 try {
-    Assert-UI ($extraCatalog.Count -eq 9 -and $widgets.Count -eq 15) 'Nine extra widgets registered'
+    Assert-UI ($extraCatalog.Count -eq 10 -and $widgets.Count -eq 16) 'Nine extra widgets registered'
     foreach($key in $extraCatalog.Keys) {Assert-UI ($ui['Show'+(Get-WidgetToggleName $key)] -and $widgets[$key].FindName('WidgetResize')) 'Extra visibility and resize controls'}
     foreach($key in $extraCatalog.Keys) {$helper=New-Object Windows.Interop.WindowInteropHelper $widgets[$key]; $handle=$helper.EnsureHandle(); $style=[DaylightWindowHost]::ExtendedStyle($handle); Assert-UI (($style -band 0x80) -ne 0 -and ($style -band 0x40000) -eq 0 -and -not $widgets[$key].ShowInTaskbar) 'Extra native task switcher flags'}
     $extras.ddays=@(); $extras.habits=@(); $extras.progress=@(); $extras.launchers=@(); $script:lastAgenda=$null; $script:lastNotionAgenda=$null; $extras.ddaySelected=''

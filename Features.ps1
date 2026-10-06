@@ -99,7 +99,7 @@ function Show-DaylightNotification([string]$Title,[string]$Text) {
 }
 function Stop-Focus([bool]$Completed=$false) {
     if(-not $script:focusSession) {return}
-    $snapshot=$script:focusSession.snapshot; $title=$script:focusSession.title; $script:focusSession=$null
+    $snapshot=$script:focusSession.snapshot; $title=$script:focusSession.title; $minutes=[int]($script:focusSession.duration/60); if($Completed -and (Get-Command Record-FocusActivity -ErrorAction SilentlyContinue)) {Record-FocusActivity $minutes $title}; $script:focusSession=$null
     Restore-LayoutSnapshot $snapshot; Update-Clock
     $featureUI.FocusStatus.Text='배치를 복원했습니다.'; $featureUI.FocusPause.Content='일시정지'
     if($Completed) {Show-DaylightNotification '집중 완료 · 잠깐 쉬어가세요' $title}

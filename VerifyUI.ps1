@@ -115,3 +115,5 @@ $noteTimer.Stop(); Clear-WallpaperCache
 . (Join-Path $PSScriptRoot 'VerifyExtras.ps1')
 
 . (Join-Path $PSScriptRoot 'VerifyAlignment.ps1')
+
+. (Join-Path $PSScriptRoot 'VerifyProductivity.ps1')

@@ -1,9 +1,41 @@
 {
-    "version":  "0.9.2",
+    "version":  "0.10.0",
     "files":  [
                   {
                       "name":  "Daylight.ps1",
-                      "sha256":  "5025C8FC65EEF819E539FF9B0516B6B50B188380B33B151CA22095E5836C65ED"
+                      "sha256":  "41EE9DA9613A3F136B77FDB0FD8F0E47CB4CD3002026F63777A2F3746CC0EA57"
+                  },
+                  {
+                      "name":  "Productivity.ps1",
+                      "sha256":  "D27DD3A99C900B73554AB07E30DD9B5FE2A5B884FA49AA5026B445DC15C54BF6"
+                  },
+                  {
+                      "name":  "ProductivityUI.ps1",
+                      "sha256":  "40114ED8F47F6C2DF26C66ADC706359FADCB39D61EA43843A6F2F3BBE39B0E18"
+                  },
+                  {
+                      "name":  "Timetable.ps1",
+                      "sha256":  "146C4E925CB627B4452C632173D6B4CA70733BF7DAE6C0D9645DE5A936C783E8"
+                  },
+                  {
+                      "name":  "QuickInput.cs",
+                      "sha256":  "036EBA6BE7BB838F091D61372ECDA3354082F66AF524BCB975371FF91EACE030"
+                  },
+                  {
+                      "name":  "UpdateWorker.ps1",
+                      "sha256":  "AED7535A5D13F8FC9C41BB5E5E84AB9405AE40C0147C4F98B738D7C2DBDA1063"
+                  },
+                  {
+                      "name":  "UpdateManager.ps1",
+                      "sha256":  "941A5F71F4596BB1ED13D37ACFD596472DEB6E80070E0C34287FD3534DEF0B1C"
+                  },
+                  {
+                      "name":  "UpdateHandoff.ps1",
+                      "sha256":  "EFD6714923D0DAEB36128169A729F0096C300E44BF7F098F030ACC3DAF093754"
+                  },
+                  {
+                      "name":  "VerifyProductivity.ps1",
+                      "sha256":  "BE3E62334DC67238BADB9C0D0678D81C9BFF989EACFF7D8AEF30A914C40F77F3"
                   },
                   {
                       "name":  "Alignment.ps1",
@@ -43,11 +75,11 @@
                   },
                   {
                       "name":  "사용안내.md",
-                      "sha256":  "B92DEEED9E231986CC18BF119FBA064ACD30087112028743B8A732A474BC4D84"
+                      "sha256":  "F48F3A8C11027DF04FAAFC317428C6ED131E6187F54EC50EEB55584739331608"
                   },
                   {
                       "name":  "Shell.ps1",
-                      "sha256":  "AA8E7790A440640DB38C3F5EF8165A39A930080A37B0D5CF6607AA0B222DBF4A"
+                      "sha256":  "59CEAD2FFEBD74894BBDF7560749614DCA00A98908433A80B98B581F098238A5"
                   },
                   {
                       "name":  "Layout.ps1",
@@ -59,7 +91,7 @@
                   },
                   {
                       "name":  "VerifyUI.ps1",
-                      "sha256":  "2976D39756479EC20515B9FB250FBD43064319BA68D16A0164F23C35645FD26E"
+                      "sha256":  "C0C1AC0A498EF304F166337DA275EEB24C1D905A04C70631ECFA30CAEE4FA1A5"
                   },
                   {
                       "name":  "Memo.ps1",
@@ -67,7 +99,7 @@
                   },
                   {
                       "name":  "Appearance.ps1",
-                      "sha256":  "C580E405C8BFF425F743E05DF38EBD87323B6C61BFE26A41E325B58CB57CD10D"
+                      "sha256":  "71AAD49FFBB85C8F6F93B4EC4496B0D2D33EB010DE4FB5E551B13D1F0D6181F1"
                   },
                   {
                       "name":  "GPT.ps1",
@@ -99,11 +131,11 @@
                   },
                   {
                       "name":  "ExtraShell.ps1",
-                      "sha256":  "B737D9B9D68ACD94619852A850051143F3132360E9D73ADE778640A4E8345556"
+                      "sha256":  "7F3F90D379D241C69C9957061CF60E9226444220DD2A39DD17C0916F4F9BCE43"
                   },
                   {
                       "name":  "Extras.ps1",
-                      "sha256":  "9965C6350EEB37E26D2C3A4DBB335778EE45DCC333464924F107216FF167DD4B"
+                      "sha256":  "470BE3889EFEDA0AA8B7C88A3EE18ED90F9CCBF70880F2A7A9BEACFDC3DA94A1"
                   },
                   {
                       "name":  "ExtraBackend.ps1",
@@ -111,7 +143,7 @@
                   },
                   {
                       "name":  "VerifyExtras.ps1",
-                      "sha256":  "9B0749551CEF85E8CBBE8FDA7F324DA6E812BFAC88262DE673EAA72E1739ACB3"
+                      "sha256":  "6ADB72645067946775C68D8E8BBFC5BDC1E29E5AB5DB0DDE9B518B6B8143BF12"
                   },
                   {
                       "name":  "Daylight.exe",
@@ -119,7 +151,7 @@
                   },
                   {
                       "name":  "Features.ps1",
-                      "sha256":  "A942B5BEDC17306DEFD2372B144E80399DB591ACDEE068495AE8366F67D03483"
+                      "sha256":  "F39384FF20D4B6A92A1DFF2533312C5EA0842BAFCA7B05D8113CD4B4B9CA64B6"
                   },
                   {
                       "name":  "VerifyFeatures.ps1",
@@ -183,11 +215,11 @@
                   },
                   {
                       "name":  "README.md",
-                      "sha256":  "1AF1BA754054994C305D5F41A73A28F146F266D04EA687FB4EF080E35C7BACE3"
+                      "sha256":  "7C8EAB636C6C4571C3525E0F8C1D9042ECC4580A4FE17BBC8295D62B8FDC56E2"
                   },
                   {
                       "name":  "CHANGELOG.md",
-                      "sha256":  "AC937FFAFD3259CD7028DBCB8E7F60F322016DAE7436667142ABB6A1D0460783"
+                      "sha256":  "A517D0D20FE84329865F2DAD11ED61CC0D465B30FDA31A50DE45B5500E2FBB77"
                   }
               ]
 }
