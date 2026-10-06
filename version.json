@@ -1,5 +1,5 @@
 {
-    "version":  "0.9.0",
+    "version":  "0.9.1",
     "files":  [
                   {
                       "name":  "Daylight.ps1",
@@ -35,7 +35,7 @@
                   },
                   {
                       "name":  "사용안내.md",
-                      "sha256":  "E4CD4A3649E985FD6A42B53522B65C5B95E95A2A24DBAFD0AD397F3E72C38BBD"
+                      "sha256":  "7756967EFC02F92601CA9841DC5AB2809CB5AB6809D5C023B80C4C0EE7C747ED"
                   },
                   {
                       "name":  "Shell.ps1",
@@ -91,7 +91,7 @@
                   },
                   {
                       "name":  "ExtraShell.ps1",
-                      "sha256":  "AAF2E208E6DE16746FD0DB64D0ED989B51AD204B34D131247C1341D770BCB6F8"
+                      "sha256":  "B737D9B9D68ACD94619852A850051143F3132360E9D73ADE778640A4E8345556"
                   },
                   {
                       "name":  "Extras.ps1",
@@ -138,8 +138,28 @@
                       "sha256":  "AE4FB9D0FC3ECDC03727D3435F892FED847D4014B80590C5ACA4728921E4B185"
                   },
                   {
+                      "name":  "YouTubeEmbedded.cs",
+                      "sha256":  "EBD32138C7788496F4BB84A9CA3BC3F11EFEF2CACF396983FC37EA14C1AE977F"
+                  },
+                  {
+                      "name":  "Microsoft.Web.WebView2.Core.dll",
+                      "sha256":  "2B999D1775004E98B32F281F4518F3952DF650970748527EF5B54FA9979D6C9C"
+                  },
+                  {
+                      "name":  "Microsoft.Web.WebView2.Wpf.dll",
+                      "sha256":  "6D329162B460515A849C693518FF626A1A3363E79D549CFD6822E5601F24603E"
+                  },
+                  {
+                      "name":  "WebView2Loader.dll",
+                      "sha256":  "8427B1FC58EC707813E5C0A51EB5D69397BB333250A7B891BE4D3B123F1E0F1C"
+                  },
+                  {
+                      "name":  "WebView2-LICENSE.txt",
+                      "sha256":  "0AF8F1B807512AAE39C2AC1AA4D0CAE65CABECB6FD554B8439A5162A0D6ECA55"
+                  },
+                  {
                       "name":  "YouTube.ps1",
-                      "sha256":  "0F31B8519735F993505EB00A35AA39553B3EACD8B484614D1F9A59124A56D94B"
+                      "sha256":  "C7AFEAB65F79252ED3DCB5CCC75CA77E972F64E4B35272F408490D050B771C37"
                   },
                   {
                       "name":  "YouTubeHost.cs",
@@ -147,19 +167,19 @@
                   },
                   {
                       "name":  "YouTubePlayer.html",
-                      "sha256":  "9A50324A8B6BF07559848CCF64AF2B05FF49881A6F297C59406AFAFDA3862F2D"
+                      "sha256":  "C66C78E939916E32E40DA1D7D2ADAB1BC9488A3168E1006F0AE670AA57A2183E"
                   },
                   {
                       "name":  "VerifyYouTube.ps1",
-                      "sha256":  "16ABA819E78F81E14D0F32DDA40A2DD71D963AAD5E6B10CAA1499038E4E68334"
+                      "sha256":  "0D9DA0ADED7FF8B6B59D2360D9B377423306B7B0B3F48BA36FB694505D233885"
                   },
                   {
                       "name":  "README.md",
-                      "sha256":  "115131B1C139ACE8A02BE2F217FBE585CF2180EA656935150D3588C28EBFB77B"
+                      "sha256":  "0A734685307A40D51A29630AE02BCA03CDF5AE9DB162EED4F07574C5244776D8"
                   },
                   {
                       "name":  "CHANGELOG.md",
-                      "sha256":  "C013CCF73243027424D50C4D085919BF4BFE10B25D855DA6830A3E12E909316F"
+                      "sha256":  "7E51E05738A613716887E2458EFCC292C724BC84B190EB989930187D2930C108"
                   }
               ]
 }

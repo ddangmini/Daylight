@@ -1,18 +1,24 @@
 ﻿if(-not ('DaylightYouTubeServer' -as [type])) {Add-Type -Path (Join-Path $PSScriptRoot 'YouTubeHost.cs')}
-$script:youtubeServer=$null; $script:youtubeHandle=[IntPtr]::Zero; $script:youtubeDiscovery=$null
-$script:youtubeLastDiscovery=[DateTime]::MinValue; $script:youtubeDeadline=[DateTime]::MinValue
-$script:youtubeLaunching=$false; $script:youtubePinned=$false; $script:youtubeGeometryStamp=''
+$script:youtubeServer=$null; $script:youtubeEmbedded=$null
 $script:youtubeProfile=Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Daylight\YouTubeProfile'
+$script:youtubeEmbeddedProfile=Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Daylight\YouTubeEmbeddedProfile'
 if(-not $state.youtube) {$state.youtube=@{url='';volume=70;geometry=$null}}
 elseif($state.youtube -isnot [hashtable]) {$map=@{}; foreach($p in $state.youtube.PSObject.Properties) {$map[$p.Name]=$p.Value}; $state.youtube=$map}
 $ui.YouTubeUrl.Text=[string]$state.youtube.url
 $ui.YouTubeVolume.Value=[Math]::Max(0,[Math]::Min(100,[double]$state.youtube.volume))
+$script:youtubeSdkError=$null
+try {
+ $core=Join-Path $PSScriptRoot 'Microsoft.Web.WebView2.Core.dll'; $wpf=Join-Path $PSScriptRoot 'Microsoft.Web.WebView2.Wpf.dll'
+ [void][Reflection.Assembly]::LoadFrom($core); [void][Reflection.Assembly]::LoadFrom($wpf)
+ $refs=@($core,$wpf,[Windows.Window].Assembly.Location,[Windows.Media.Brush].Assembly.Location,[Windows.DependencyObject].Assembly.Location,'System.dll','System.Core.dll','System.Drawing.dll','System.Xaml.dll')
+ if(-not ('DaylightEmbeddedYouTube' -as [type])) {Add-Type -Path (Join-Path $PSScriptRoot 'YouTubeEmbedded.cs') -ReferencedAssemblies $refs}
+} catch {$script:youtubeSdkError='내장 플레이어 구성 요소가 없습니다. 패치를 다시 적용하세요.'; Write-DaylightDiagnostic 'youtube-sdk' $_}
 $youtubeSettingsMarkup=@'
 <Expander xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Header="YouTube · 계정과 재생" Foreground="#E9EDF5" FontSize="16" Margin="0,8,0,8"><StackPanel Margin="0,12,0,8" TextElement.Foreground="#E9EDF5">
- <TextBlock Text="1. 전용 브라우저에서 Premium 계정으로 로그인하세요.&#10;2. 위젯에 영상·재생목록 링크를 넣고 재생 창을 여세요." FontSize="12" TextWrapping="Wrap" Margin="0,0,0,12"/>
- <WrapPanel><Button x:Name="YouTubeSettingsLogin" Content="YouTube 로그인 ↗"/><Button x:Name="YouTubeSettingsShow" Content="위젯 표시"/></WrapPanel>
- <TextBlock Text="로그인은 이 PC의 전용 Edge 프로필에 유지됩니다. Daylight는 비밀번호나 쿠키를 읽지 않습니다. Premium은 YouTube가 로그인 계정을 인식할 때 적용되며, 영상에 포함된 협찬은 제거되지 않습니다." FontSize="12" TextWrapping="Wrap" Foreground="#B8C5D8" Margin="0,12,0,8"/>
- <TextBlock Text="광고가 나오면 재생 창의 YouTube 링크에서 계정을 확인하고, Edge의 쿠키 설정에서 이 재생 창의 YouTube 쿠키 허용 여부를 확인하세요. 내장 플레이어를 허용하지 않는 영상은 공식 사이트에서 재생하세요." FontSize="12" TextWrapping="Wrap" Foreground="#B8C5D8"/>
+ <TextBlock Text="영상·재생목록 링크를 넣으면 Daylight 안에서 바로 재생됩니다." FontSize="12" TextWrapping="Wrap" Margin="0,0,0,12"/>
+ <WrapPanel><Button x:Name="YouTubeSettingsLogin" Content="Premium · 공식 사이트 ↗"/><Button x:Name="YouTubeSettingsShow" Content="위젯 표시"/></WrapPanel>
+ <TextBlock Text="내장 플레이어는 브라우저 로그인 상태를 공유하지 않습니다. Premium 광고 제거가 필요하면 공식 사이트에서 재생하세요." FontSize="12" TextWrapping="Wrap" Foreground="#B8C5D8" Margin="0,12,0,8"/>
+ <TextBlock Text="내장 재생을 허용하지 않는 영상은 공식 사이트 버튼을 사용하세요." FontSize="12" TextWrapping="Wrap" Foreground="#B8C5D8"/>
  <Button x:Name="YouTubeOfficial" Content="현재 링크를 공식 사이트에서 열기 ↗" HorizontalAlignment="Left" Margin="0,12,0,0"/>
 </StackPanel></Expander>
 '@
@@ -48,76 +54,55 @@ function Open-YouTubeProfile([string]$Url='https://www.youtube.com/') {
     } catch {Write-DaylightDiagnostic 'youtube-login' $_; $ui.YouTubeStatus.Text='YouTube 브라우저를 열지 못했습니다. Edge 설치 상태를 확인하세요.'}
 }
 function Send-YouTubeCommand([string]$Action,$Value=$null) {
-    if(-not $script:youtubeServer) {return}
-    $command=@{action=$Action}; if($null -ne $Value) {$command.value=$Value}
-    $script:youtubeServer.Enqueue(($command|ConvertTo-Json -Compress))
+ if(-not $script:youtubeServer) {return}
+ $command=@{action=$Action}; if($null -ne $Value) {$command.value=$Value}
+ $script:youtubeServer.Enqueue(($command|ConvertTo-Json -Compress))
 }
-function Close-YouTubePlayer {
-    if($script:youtubeHandle -ne [IntPtr]::Zero -and [DaylightYouTubeWindows]::IsWindow($script:youtubeHandle)) {
-        $rect=[DaylightYouTubeWindows]::Position($script:youtubeHandle)
-        $state.youtube.geometry=@{left=$rect.Left;top=$rect.Top;width=$rect.Right-$rect.Left;height=$rect.Bottom-$rect.Top}
-        Send-YouTubeCommand 'pause'; [DaylightYouTubeWindows]::Close($script:youtubeHandle)
-    }
-    $script:youtubeHandle=[IntPtr]::Zero; $script:youtubeLaunching=$false
-    $ui.YouTubeToggle.Content='▶'; foreach($name in @('YouTubeToggle','YouTubePrevious','YouTubeNext')) {$ui[$name].IsEnabled=$false}
-}
+function Close-YouTubePlayer {Send-YouTubeCommand 'pause'}
 function Open-YouTubePlayer {
-    try {
-        $link=Resolve-YouTubeLink $ui.YouTubeUrl.Text; $edge=Get-DaylightEdge
-        if(-not $script:youtubeServer) {$script:youtubeServer=New-Object DaylightYouTubeServer ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'YouTubePlayer.html')))}
-        $state.youtube.url=$link.url; $ui.YouTubeUrl.Text=$link.url; Save-State
-        $script:youtubeServer.Enqueue((@{action='load';video=$link.video;list=$link.list}|ConvertTo-Json -Compress))
-        Send-YouTubeCommand 'volume' ([int]$ui.YouTubeVolume.Value)
-        if($script:youtubeHandle -ne [IntPtr]::Zero -and [DaylightYouTubeWindows]::IsWindow($script:youtubeHandle)) {[DaylightYouTubeWindows]::Activate($script:youtubeHandle); return}
-        [void][IO.Directory]::CreateDirectory($script:youtubeProfile)
-        $arguments='--user-data-dir="'+$script:youtubeProfile+'" --no-first-run --no-default-browser-check --app="'+$script:youtubeServer.Url+'" --window-size=640,440'
-        Start-Process -FilePath $edge -ArgumentList $arguments
-        $script:youtubeLaunching=$true; $script:youtubeDeadline=[DateTime]::UtcNow.AddSeconds(40); $script:youtubeLastDiscovery=[DateTime]::MinValue
-        $ui.YouTubeStatus.Text='재생 창 여는 중 · 처음에는 영상의 재생 버튼을 눌러주세요.'
-    } catch {Write-DaylightDiagnostic 'youtube-open' $_; $ui.YouTubeStatus.Text=$_.Exception.Message}
+ try {
+  if($script:youtubeSdkError) {throw $script:youtubeSdkError}
+  $link=Resolve-YouTubeLink $ui.YouTubeUrl.Text
+  if($script:youtubeEmbedded -and $script:youtubeEmbedded.Error) {Stop-YouTubeWork}
+  if(-not $script:youtubeServer) {$script:youtubeServer=New-Object DaylightYouTubeServer ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'YouTubePlayer.html')))}
+  if(-not $script:youtubeEmbedded) {
+   $script:youtubeEmbedded=New-Object DaylightEmbeddedYouTube $PSScriptRoot
+   [void]$ui.YouTubeViewHost.Children.Add($script:youtubeEmbedded.View)
+   $ui.YouTubePlaceholder.Visibility='Collapsed'
+   $script:youtubeEmbedded.Start($script:youtubeServer.Url,$script:youtubeEmbeddedProfile)
+  }
+  $state.youtube.url=$link.url; $ui.YouTubeUrl.Text=$link.url; Save-State
+  $script:youtubeServer.Enqueue((@{action='load';video=$link.video;list=$link.list}|ConvertTo-Json -Compress))
+  Send-YouTubeCommand 'volume' ([int]$ui.YouTubeVolume.Value)
+  $ui.YouTubeStatus.Text='영상 불러오는 중 · 처음에는 영상의 재생 버튼을 눌러주세요.'
+ } catch {Write-DaylightDiagnostic 'youtube-embed' $_; $ui.YouTubeStatus.Text=$_.Exception.Message}
 }
 function Update-YouTubePlayer {
-    if($SelfTest) {return}
-    if($script:youtubeHandle -ne [IntPtr]::Zero -and -not [DaylightYouTubeWindows]::IsWindow($script:youtubeHandle)) {Close-YouTubePlayer; $ui.YouTubeStatus.Text='재생 창을 닫았습니다. 링크는 저장되어 있습니다.'}
-
-    if($script:youtubeDiscovery -and $script:youtubeDiscovery.State -ne 'Running') {
-        try {
-            $allowed=@(Receive-DaylightJob $script:youtubeDiscovery)
-            if($script:youtubeServer -and $allowed.Count) {$found=[DaylightYouTubeWindows]::Find($script:youtubeServer.WindowTitle,[int[]]$allowed); if($found -ne [IntPtr]::Zero) {
-                $script:youtubeHandle=$found; $script:youtubeLaunching=$false; [DaylightWindowHost]::HideFromSwitcher($found)
-                $g=$state.youtube.geometry; if($g -and $g.width -ge 320 -and $g.height -ge 280) {$area=[Windows.SystemParameters]::WorkArea; $w=[Math]::Min($g.width,$area.Width); $h=[Math]::Min($g.height,$area.Height); $x=[Math]::Max($area.Left,[Math]::Min($g.left,$area.Right-$w)); $y=[Math]::Max($area.Top,[Math]::Min($g.top,$area.Bottom-$h)); [DaylightYouTubeWindows]::RestorePosition($found,$x,$y,$w,$h)}
-                [DaylightYouTubeWindows]::Pin($found,[bool]$state.widgetPins.youtube); $script:youtubePinned=[bool]$state.widgetPins.youtube
-            }}
-        } catch {Write-DaylightDiagnostic 'youtube-window' $_} finally {Remove-DaylightJob $script:youtubeDiscovery; $script:youtubeDiscovery=$null}
-    }
-    if(-not $state.youtubeVisible -or -not $widgets.youtube.IsVisible) {if($script:youtubeHandle -ne [IntPtr]::Zero) {Close-YouTubePlayer}; if(-not $script:youtubeLaunching) {return}}
-    if($script:youtubeLaunching) {
-        if([DateTime]::UtcNow -gt $script:youtubeDeadline) {$script:youtubeLaunching=$false; $ui.YouTubeStatus.Text='재생 창을 찾지 못했습니다. Edge 창을 확인한 뒤 다시 열어주세요.'}
-        elseif(-not $script:youtubeDiscovery -and ([DateTime]::UtcNow-$script:youtubeLastDiscovery).TotalSeconds -ge 3) {
-            $script:youtubeLastDiscovery=[DateTime]::UtcNow
-            $script:youtubeDiscovery=Start-DaylightJob -ScriptBlock {param($profile); Get-CimInstance Win32_Process -Filter "Name = 'msedge.exe'" | Where-Object {$_.CommandLine -and $_.CommandLine.IndexOf($profile,[StringComparison]::OrdinalIgnoreCase) -ge 0} | ForEach-Object {[int]$_.ProcessId}} -ArgumentList @($script:youtubeProfile)
-        }
-    }
-    if($script:youtubeHandle -ne [IntPtr]::Zero) {
-        if($script:youtubePinned -ne [bool]$state.widgetPins.youtube) {$script:youtubePinned=[bool]$state.widgetPins.youtube; [DaylightYouTubeWindows]::Pin($script:youtubeHandle,$script:youtubePinned)}
-        $rect=[DaylightYouTubeWindows]::Position($script:youtubeHandle); $stamp="$($rect.Left),$($rect.Top),$($rect.Right),$($rect.Bottom)"
-        if($stamp -ne $script:youtubeGeometryStamp) {$script:youtubeGeometryStamp=$stamp; $state.youtube.geometry=@{left=$rect.Left;top=$rect.Top;width=$rect.Right-$rect.Left;height=$rect.Bottom-$rect.Top}; Save-State}
-        try {$info=$script:youtubeServer.StateJson|ConvertFrom-Json; foreach($name in @('YouTubeToggle','YouTubePrevious','YouTubeNext')) {$ui[$name].IsEnabled=[bool]$info.ready}; $ui.YouTubeToggle.Content='▶'; if($info.playing) {$ui.YouTubeToggle.Content='❚❚'}; if($info.error) {$ui.YouTubeStatus.Text=[string]$info.error} elseif($info.title) {$ui.YouTubeStatus.Text=[string]$info.title} elseif($info.ready) {$ui.YouTubeStatus.Text='재생 준비 완료 · 영상의 재생 버튼을 눌러주세요.'}} catch {Write-DaylightDiagnostic 'youtube-state' $_}
-    }
+ if($SelfTest -or -not $script:youtubeEmbedded) {return}
+ if(-not $state.youtubeVisible -or -not $widgets.youtube.IsVisible) {Close-YouTubePlayer; return}
+ if($script:youtubeEmbedded.Error) {$ui.YouTubeStatus.Text=$script:youtubeEmbedded.Error; return}
+ try {
+  $info=$script:youtubeServer.StateJson|ConvertFrom-Json
+  foreach($name in @('YouTubeToggle','YouTubePrevious','YouTubeNext')) {$ui[$name].IsEnabled=[bool]$info.ready}
+  $ui.YouTubeToggle.Content='▶'; if($info.playing) {$ui.YouTubeToggle.Content='❚❚'}
+  if($info.error) {$ui.YouTubeStatus.Text=[string]$info.error} elseif($info.title) {$ui.YouTubeStatus.Text=[string]$info.title} elseif($info.ready) {$ui.YouTubeStatus.Text='재생 준비 완료 · 영상의 재생 버튼을 눌러주세요.'}
+ } catch {Write-DaylightDiagnostic 'youtube-state' $_}
 }
 function Stop-YouTubeWork {
-    Close-YouTubePlayer
-    if($script:youtubeDiscovery) {Remove-DaylightJob $script:youtubeDiscovery; $script:youtubeDiscovery=$null}
-    if($script:youtubeServer) {$script:youtubeServer.Dispose(); $script:youtubeServer=$null}
+ if($script:youtubeEmbedded) {[void]$ui.YouTubeViewHost.Children.Remove($script:youtubeEmbedded.View); $script:youtubeEmbedded.Dispose(); $script:youtubeEmbedded=$null}
+ if($script:youtubeServer) {$script:youtubeServer.Dispose(); $script:youtubeServer=$null}
+ $ui.YouTubePlaceholder.Visibility='Visible'
 }
 $ui.YouTubeOpen.Add_Click({Open-YouTubePlayer})
 $ui.YouTubeUrl.Add_KeyDown({if($_.Key -eq 'Enter') {Open-YouTubePlayer; $_.Handled=$true}})
 $ui.YouTubeToggle.Add_Click({Send-YouTubeCommand 'toggle'})
 $ui.YouTubePrevious.Add_Click({Send-YouTubeCommand 'previous'})
 $ui.YouTubeNext.Add_Click({Send-YouTubeCommand 'next'})
-$ui.YouTubeLogin.Add_Click({Open-YouTubeProfile})
+$ui.YouTubeLogin.Add_Click({try {$link=Resolve-YouTubeLink $ui.YouTubeUrl.Text; Open-YouTubeProfile $link.url} catch {$ui.YouTubeStatus.Text=$_.Exception.Message}})
 $ui.YouTubeVolume.Add_ValueChanged({$state.youtube.volume=[int]$this.Value; Send-YouTubeCommand 'volume' ([int]$this.Value); Save-State})
 $youtubeSettings.FindName('YouTubeSettingsLogin').Add_Click({Open-YouTubeProfile})
 $youtubeSettings.FindName('YouTubeSettingsShow').Add_Click({Set-WidgetVisible 'youtube' $true})
 $youtubeSettings.FindName('YouTubeOfficial').Add_Click({try {$link=Resolve-YouTubeLink $ui.YouTubeUrl.Text; Open-YouTubeProfile $link.url} catch {$ui.YouTubeStatus.Text=$_.Exception.Message; Set-WidgetVisible 'youtube' $true}})
 foreach($name in @('YouTubeToggle','YouTubePrevious','YouTubeNext')) {$ui[$name].IsEnabled=$false}
+# Keep a 16:9 video viewport as the window is resized, without enlarging controls.
+$ui.YouTubeFrame.Add_SizeChanged({$frame=$ui.YouTubeFrame; $w=[Math]::Max(200,$frame.ActualWidth); $h=[Math]::Max(200,$frame.ActualHeight); $viewWidth=[Math]::Min($w,$h*16/9); $viewHeight=[Math]::Max(200,$viewWidth*9/16); $ui.YouTubeViewHost.Width=$viewWidth; $ui.YouTubeViewHost.Height=$viewHeight; $ui.YouTubeViewHost.HorizontalAlignment='Center'; $ui.YouTubeViewHost.VerticalAlignment='Center'; $ui.YouTubeViewHost.Clip=New-Object Windows.Media.RectangleGeometry (New-Object Windows.Rect 0,0,$viewWidth,$viewHeight),14,14})

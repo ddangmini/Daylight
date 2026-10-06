@@ -6,19 +6,19 @@
  <title>__TITLE__</title>
  <style>
   :root{color-scheme:dark;font-family:"Malgun Gothic",sans-serif;background:#111a2b;color:#e9edf5}
-  *{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column}
-  header{padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:12px}
+  *{box-sizing:border-box}body{overflow:hidden;margin:0;height:100vh;display:flex;flex-direction:column}
+  header{display:none!important;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:12px}
   header strong{letter-spacing:1.5px;color:#a3e8d2}header span{flex:1;color:#b8c5d8}
   a{color:#a3e8d2;text-decoration:none}main{flex:1;min-height:200px;position:relative}
-  #player{width:100%;height:100%;min-width:200px;min-height:200px}
+  #player{display:block;width:100%;height:100%;min-width:200px;min-height:200px}
   #empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:12px;padding:24px}
   #empty b{font-size:40px;color:#ed6868}#empty p{font-size:13px;color:#b8c5d8;line-height:1.8}
-  footer{padding:10px 14px;font-size:11px;color:#b8c5d8;background:#192235}
+  footer{display:none;padding:10px 14px;font-size:11px;color:#b8c5d8;background:#192235}
  </style>
 </head>
 <body>
  <header><strong>DAYLIGHT</strong><span id="caption">YouTube 재생</span><a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube · 로그인 ↗</a></header>
- <main><div id="player"></div><div id="empty"><b>▶</b><div>나만의 작은 재생 창</div><p>Daylight 위젯에서 영상이나 재생목록 링크를 입력하세요.<br>Premium 혜택은 YouTube 로그인 상태에 따라 적용됩니다.</p></div></main>
+ <main><div id="player"></div><div id="empty"><b>▶</b><div>나만의 작은 재생 창</div><p>Daylight 위젯에서 영상이나 재생목록 링크를 입력하세요.<br>YouTube 공식 플레이어로 위젯 안에서 바로 재생합니다.</p></div></main>
  <footer id="status">YouTube 공식 플레이어 · 광고와 Premium 혜택은 YouTube에서 관리합니다.</footer>
  <script>
   'use strict';
@@ -35,7 +35,7 @@
    if(c.action==='load'){
     if(!ready){pending=c;return}error='';document.querySelector('#empty').style.display='none';
     if(c.list)player.loadPlaylist({list:c.list,listType:'playlist',index:0});else player.loadVideoById(c.video);
-    document.querySelector('#status').textContent='Premium 계정 로그인과 YouTube 쿠키 허용 여부에 따라 광고 없이 재생됩니다.';
+    document.querySelector('#status').textContent='YouTube 공식 플레이어';
    }else if(ready){
     if(c.action==='toggle'){player.getPlayerState()===1?player.pauseVideo():player.playVideo()}
     if(c.action==='pause')player.pauseVideo();

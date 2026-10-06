@@ -5,6 +5,7 @@ try {
     Assert-UI ((Resolve-YouTubeLink 'https://www.youtube.com/playlist?list=PLabcdefghijk123').list -eq 'PLabcdefghijk123') 'YouTube playlist parsing'
     foreach($link in @('http://www.youtube.com/watch?v=M7lc1UVf-VE','https://youtube.com.evil.example/watch?v=M7lc1UVf-VE','https://www.youtube.com:9443/watch?v=M7lc1UVf-VE','https://user@www.youtube.com/watch?v=M7lc1UVf-VE','https://www.youtube.com/watch?v=bad','javascript:alert(1)')) {$blocked=$false; try {Resolve-YouTubeLink $link | Out-Null} catch {$blocked=$true}; Assert-UI $blocked 'Invalid or non-YouTube link rejected'}
     Assert-UI ($ui.ShowYoutube -and $ui.YouTubeUrl -and $youtubeSettings.FindName('YouTubeSettingsLogin')) 'YouTube widget and settings wired'
+    Assert-UI ((-not $script:youtubeSdkError) -and ('DaylightEmbeddedYouTube' -as [type]) -and $ui.YouTubeViewHost) 'Embedded SDK and in-widget host loaded'
     $server=New-Object DaylightYouTubeServer ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'YouTubePlayer.html')))
     $page=Invoke-WebRequest -Uri $server.Url -UseBasicParsing -TimeoutSec 5
     Assert-UI ($page.Content.Contains('https://www.youtube.com/iframe_api') -and -not $page.Content.Contains('__ORIGIN__')) 'Official player served on per-session loopback origin'
