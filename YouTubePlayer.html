@@ -22,10 +22,10 @@
  <footer id="status">YouTube 공식 플레이어 · 광고와 Premium 혜택은 YouTube에서 관리합니다.</footer>
  <script>
   'use strict';
-  let player=null,ready=false,pending=null,error='',busy=false,lastState='',desiredVolume=70,failures=0;
+  let player=null,ready=false,pending=null,error='',busy=false,lastState='',desiredVolume=70,failures=0,loadToken='',endedToken='',started=false,expectedVideo='';
   const base=new URL('.',location.href), origin='__ORIGIN__';
   const sendState=async()=>{
-   let data={ready,error,playing:false,title:'',url:'',volume:70};
+   let data={ready,error,playing:false,title:'',url:'',volume:70,token:loadToken,endedToken};
    if(ready){try{const v=player.getVideoData(); data.title=String(v.title||'').slice(0,300);data.playing=player.getPlayerState()===1;data.url=player.getVideoUrl();data.volume=player.getVolume()}catch{}}
    document.querySelector('#caption').textContent=data.title||'YouTube 재생';
    const body=JSON.stringify(data);if(body!==lastState){lastState=body;try{await fetch(new URL('state',base),{method:'POST',headers:{'Content-Type':'application/json'},body})}catch{}}
@@ -33,7 +33,7 @@
   function execute(c){
    if(c.action==='volume'){desiredVolume=Math.max(0,Math.min(100,Number(c.value)));if(ready)player.setVolume(desiredVolume);return}
    if(c.action==='load'){
-    if(!ready){pending=c;return}error='';document.querySelector('#empty').style.display='none';
+    if(!ready){pending=c;return}error='';loadToken=String(c.token||'');endedToken='';started=false;expectedVideo=String(c.video||'');document.querySelector('#empty').style.display='none';
     if(c.list)player.loadPlaylist({list:c.list,listType:'playlist',index:0});else player.loadVideoById(c.video);
     document.querySelector('#status').textContent='YouTube 공식 플레이어';
    }else if(ready){
@@ -47,7 +47,7 @@
   window.onYouTubeIframeAPIReady=()=>{
    player=new YT.Player('player',{width:'100%',height:'100%',playerVars:{origin,playsinline:1,autoplay:0},events:{
     onReady:()=>{ready=true;player.setVolume(desiredVolume);if(pending){execute(pending);pending=null}sendState()},
-    onStateChange:sendState,
+    onStateChange:e=>{const matches=!expectedVideo||player.getVideoData().video_id===expectedVideo;if(e.data===1&&matches)started=true;if(e.data===0&&started&&matches){endedToken=loadToken;started=false}sendState()},
     onAutoplayBlocked:()=>{document.querySelector('#status').textContent='브라우저가 자동 재생을 막았습니다. 영상의 재생 버튼을 눌러주세요.'},
     onError:e=>{const messages={2:'영상 링크를 확인하세요.',5:'이 영상은 현재 재생할 수 없습니다.',100:'삭제되었거나 비공개인 영상입니다.',101:'이 영상은 외부 플레이어 재생을 허용하지 않습니다.',150:'이 영상은 외부 플레이어 재생을 허용하지 않습니다.',153:'YouTube가 재생 창을 확인하지 못했습니다. 공식 사이트에서 재생하세요.'};error=messages[e.data]||'YouTube 재생 오류 ('+e.data+')';document.querySelector('#status').textContent=error;sendState()}
    }});
