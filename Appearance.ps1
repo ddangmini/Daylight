@@ -110,6 +110,7 @@ function Set-WidgetAppearance([string]$Key,[double]$Brightness=-1) {
         if($extraCatalog.Contains($Key) -and ($element -is [Windows.Controls.Button] -or $element -is [Windows.Controls.CheckBox])) {$element.Foreground=$foreground; if($element -is [Windows.Controls.Button]) {$element.Background='Transparent'}}
         foreach($child in [Windows.LogicalTreeHelper]::GetChildren($element)) {if($child -is [Windows.DependencyObject]) {$queue.Enqueue($child)}}
     }
+    if(Get-Command Set-WidgetChrome -ErrorAction SilentlyContinue) {Set-WidgetChrome $Key}
     $surface.FindName('WidgetHint').ToolTip= '글자: '+$(if($dark){'어둡게'}else{'밝게'})+' · 배경 투명도 '+[Math]::Round((1-$style.opacity)*100)+'%'
 }
 function Set-DaylightTextTone {Update-WallpaperCache; foreach($key in $widgets.Keys) {Set-WidgetAppearance $key}}

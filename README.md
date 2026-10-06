@@ -4,7 +4,7 @@
 
 ## 다운로드와 실행
 
-제공된 **Daylight-0.9.1.zip**을 별도 폴더에 압축을 풀고 `Daylight.exe` 또는 `Start.cmd`를 실행하세요. Windows 10/11과 Windows PowerShell 5.1이 필요합니다. YouTube 기능에는 Microsoft Edge WebView2 Runtime이 필요합니다. 실행 파일은 코드 서명이 되어 있지 않습니다.
+제공된 **Daylight-0.9.2.zip**을 별도 폴더에 압축을 풀고 `Daylight.exe` 또는 `Start.cmd`를 실행하세요. Windows 10/11과 Windows PowerShell 5.1이 필요합니다. YouTube 기능에는 Microsoft Edge WebView2 Runtime이 필요합니다. 실행 파일은 코드 서명이 되어 있지 않습니다.
 
 기존 사용자는 앱을 종료하고 새 파일을 별도 폴더에 푼 다음 `Update.cmd`를 실행해 기존 앱 폴더를 선택하세요. 기존 설정·메모·할 일·연동 정보는 유지됩니다. `data.json`과 `*.dat` 파일을 삭제하거나 공개하지 마세요.
 
@@ -41,3 +41,9 @@ powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\Daylight.ps1 -Sel
 ```
 
 [변경 내역](CHANGELOG.md)
+
+## 테두리·제목·가운데 정렬
+
+설정 → 창 동작 · 잠금 → 깔끔한 화면 · 정렬에서 제목을 마우스를 올릴 때만 표시하거나 모든 테두리를 숨길 수 있습니다. 완전히 투명한 창은 테두리도 자동으로 숨깁니다. 제목 숨김과 가장자리 자동 정렬은 기본으로 켜져 있으며 설정에서 끌 수 있습니다.
+
+가장자리 자동 정렬은 이동·크기 조절을 마칠 때 가까운 위젯 및 화면 가장자리를 맞춥니다. 14px 밖에서는 원래 위치를 유지합니다. 선택한 창 가운데 정렬은 창별 꾸미기의 대상 창을 현재 화면 가운데로 옮깁니다. 현재 배치 가운데 정렬은 보이는 잠금 해제된 창들을 간격을 유지한 채 함께 가운데로 옮깁니다. 잠긴 창은 이동하지 않습니다. 각 위젯의 우클릭 메뉴에도 가운데 정렬이 있습니다.

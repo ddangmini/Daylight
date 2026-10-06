@@ -19,7 +19,7 @@ if (Test-Path -LiteralPath $DataPath) {
         $script:state.compact = [bool]$saved.compact
         $script:state.pinned = [bool]$saved.pinned
         if ($saved.calendarId) { $script:state.calendarId = [string]$saved.calendarId }
-        foreach ($key in @('youtube','youtubeVisible','extras','ddayVisible','habitsVisible','mediaVisible','launcherVisible','progressVisible','systemVisible','photoVisible','quoteVisible','widgetDesktop','widgetLocks','autoLayout','lockRatio','clockVisible','weatherVisible','darkText','geometry','weatherCity','weatherLatitude','weatherLongitude','mainVisible','tasksVisible','memoVisible','chatVisible','appearance','widgetPins','layoutProfiles','alertSettings','notifications','notes','selectedNote')) {
+        foreach ($key in @('hideWidgetTitles','hideWidgetBorders','snapWidgets','youtube','youtubeVisible','extras','ddayVisible','habitsVisible','mediaVisible','launcherVisible','progressVisible','systemVisible','photoVisible','quoteVisible','widgetDesktop','widgetLocks','autoLayout','lockRatio','clockVisible','weatherVisible','darkText','geometry','weatherCity','weatherLatitude','weatherLongitude','mainVisible','tasksVisible','memoVisible','chatVisible','appearance','widgetPins','layoutProfiles','alertSettings','notifications','notes','selectedNote')) {
             if ($null -ne $saved.PSObject.Properties[$key]) { $script:state[$key] = $saved.$key }
         }
     } catch { $script:loadWarning = '저장 파일을 읽지 못했습니다. 기존 파일을 보존합니다.' }
@@ -230,6 +230,7 @@ $ui.Notion.Add_Click({ Start-Process 'https://www.notion.so/' })
 . (Join-Path $PSScriptRoot 'Desktop.ps1')
 . (Join-Path $PSScriptRoot 'Extras.ps1')
 . (Join-Path $PSScriptRoot 'YouTube.ps1')
+. (Join-Path $PSScriptRoot 'Alignment.ps1')
 $script:timer = New-Object Windows.Threading.DispatcherTimer
 $timer.Interval = [TimeSpan]::FromSeconds(1); $timer.Add_Tick({
     Invoke-DaylightSafe 'clock' {Update-Clock}

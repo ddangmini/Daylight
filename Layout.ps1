@@ -114,13 +114,13 @@ foreach($key in $widgets.Keys) {
         if($state.widgetLocks -and $state.widgetLocks[$target.Tag]) {return}
         if($_.OriginalSource -is [Windows.Controls.TextBlock] -or $_.OriginalSource -is [Windows.Controls.Border] -or $_.OriginalSource -eq $this) {
             $_.Handled=$true
-            Invoke-DaylightSafe 'drag' {$target.DragMove(); Save-State}
+            Invoke-DaylightSafe 'drag' {$target.DragMove(); Snap-DaylightWidget $target.Tag; Save-State}
         }
     })
     $handle=$surface.FindName('WidgetResize'); $handle.Tag=[pscustomobject]@{window=$surface;ratio=0}
     $handle.Add_DragStarted({$this.Tag.ratio=$this.Tag.window.Width/$this.Tag.window.Height})
     $handle.Add_DragDelta({$target=$this.Tag.window; if($state.widgetLocks -and $state.widgetLocks[$target.Tag]) {return}; $ratio=0; $width=$target.Width+$_.HorizontalChange; if($state.lockRatio) {$ratio=$this.Tag.ratio; if([Math]::Abs($_.VerticalChange*$ratio) -gt [Math]::Abs($_.HorizontalChange)) {$width=$target.Width+$_.VerticalChange*$ratio}}; Resize-DaylightWindow $target $width ($target.Height+$_.VerticalChange) $ratio})
-    $handle.Add_DragCompleted({Save-State})
+    $handle.Add_DragCompleted({Snap-DaylightWidget $this.Tag.window.Tag; Save-State})
     $toggle=$ui['Show'+(Get-WidgetToggleName $key)]; $toggle.Tag=$key; $toggle.IsChecked=[bool]$state[$key+'Visible']; $toggle.Add_Click({Set-WidgetVisible $this.Tag ([bool]$this.IsChecked)})
     $surface.Add_SizeChanged({if($script:layoutReady -and $this.Tag -in @('main','tasks')) {Update-DaylightLayout}})
     $surface.ContextMenu=New-Object Windows.Controls.ContextMenu

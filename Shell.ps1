@@ -8,7 +8,7 @@ function New-Widget([string]$Key,[string]$Title,[double]$Width,[double]$Height,[
  <Window.Resources>__THEME__</Window.Resources>
  <Border x:Name="Surface" Background="#A6192235" CornerRadius="20" Padding="20" BorderThickness="1" BorderBrush="#18FFFFFF"><Grid>
   <Grid.RowDefinitions><RowDefinition Height="36"/><RowDefinition/><RowDefinition Height="24"/></Grid.RowDefinitions>
-  <Grid x:Name="WidgetDrag" Background="Transparent"><StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Border x:Name="Accent" Background="#A3E8D2" Width="4" Height="14" CornerRadius="2" Margin="0,0,9,0"/><TextBlock Text="__TITLE__" FontSize="12" FontWeight="SemiBold"/></StackPanel><StackPanel x:Name="WidgetTools" Style="{StaticResource QuietTools}" Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="WidgetPin" Content="◇" ToolTip="이 창 항상 위" Padding="7,3"/><Button x:Name="Appearance" Content="◐" ToolTip="이 창 꾸미기" Padding="7,3"/><Button x:Name="WidgetSettings" Content="⚙" ToolTip="설정" Padding="7,3"/><Button x:Name="WidgetClose" Content="×" ToolTip="이 창 숨기기" Padding="7,3"/></StackPanel></Grid>
+  <Grid x:Name="WidgetDrag" Background="Transparent"><StackPanel x:Name="WidgetTitle" Orientation="Horizontal" VerticalAlignment="Center"><Border x:Name="Accent" Background="#A3E8D2" Width="4" Height="14" CornerRadius="2" Margin="0,0,9,0"/><TextBlock Text="__TITLE__" FontSize="12" FontWeight="SemiBold"/></StackPanel><StackPanel x:Name="WidgetTools" Style="{StaticResource QuietTools}" Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="WidgetPin" Content="◇" ToolTip="이 창 항상 위" Padding="7,3"/><Button x:Name="Appearance" Content="◐" ToolTip="이 창 꾸미기" Padding="7,3"/><Button x:Name="WidgetSettings" Content="⚙" ToolTip="설정" Padding="7,3"/><Button x:Name="WidgetClose" Content="×" ToolTip="이 창 숨기기" Padding="7,3"/></StackPanel></Grid>
   <Grid Grid.Row="1" Margin="0,10,0,0">__BODY__</Grid>
   <TextBlock x:Name="WidgetHint" Grid.Row="2" Text="드래그로 이동 · 모서리로 크기 조절" FontSize="9" VerticalAlignment="Bottom" Style="{StaticResource QuietLabel}"/>
   <Thumb x:Name="WidgetResize" Grid.RowSpan="3" Style="{StaticResource ResizeHandle}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
@@ -85,7 +85,7 @@ $settingsMarkup = @'
   <ComboBox x:Name="WeatherChoice" Margin="0,10,0,0" ToolTip="검색 결과에서 지역을 선택하세요"/>
   <TextBlock x:Name="WeatherStatus" Text="서울 · 15분마다 갱신" Foreground="#99A7BE" FontSize="11" TextWrapping="Wrap" Margin="0,10,0,8"/><Button x:Name="WeatherRefresh" Content="날씨 새로고침" HorizontalAlignment="Left"/>
   <TextBlock Text="서비스 열기" FontSize="16" FontWeight="SemiBold" Margin="0,28,0,12"/><WrapPanel><Button x:Name="GPT" Content="Gemini 대화 열기"/><Button x:Name="Calendar" Content="캘린더 ↗"/><Button x:Name="Notion" Content="Notion ↗"/></WrapPanel>
-  <TextBlock Text="Daylight 0.9 · 바탕화면 위젯" Foreground="#8593AA" FontSize="10" Margin="0,28,0,0"/>
+  <TextBlock Text="Daylight 0.9.2 · 바탕화면 위젯" Foreground="#8593AA" FontSize="10" Margin="0,28,0,0"/>
  <Button x:Name="Quit" Content="Daylight 종료" HorizontalAlignment="Left" Margin="0,16,0,0"/></StackPanel></ScrollViewer>
 </Window>
 '@

@@ -113,3 +113,5 @@ $noteTimer.Stop(); Clear-WallpaperCache
 'PASS: widgets, hidden controls, memo/pagination/resize, contrast, thirteen themes and customization, independent pin persistence, taskbar hidden/custom icon, Gemini parser/async/quota cooldown'
 
 . (Join-Path $PSScriptRoot 'VerifyExtras.ps1')
+
+. (Join-Path $PSScriptRoot 'VerifyAlignment.ps1')
